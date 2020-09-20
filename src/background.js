@@ -2,7 +2,14 @@
 
 import path from "path";
 
-import { app, protocol, BrowserWindow, Tray, ipcMain } from "electron";
+import {
+  app,
+  protocol,
+  BrowserWindow,
+  Tray,
+  ipcMain,
+  nativeTheme,
+} from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import Positioner from "electron-positioner";
@@ -31,8 +38,8 @@ function showWindow() {
 
     const positioner = new Positioner(win);
 
-    win.setMinimumSize(550, 800);
-    win.setSize(550, 800);
+    win.setMinimumSize(400, 600);
+    win.setSize(400, 600);
     win.setResizable(false);
     win.setMovable(false);
     positioner.move(position, trayBounds);
@@ -51,9 +58,9 @@ function createWindow() {
   win = new BrowserWindow({
     width: 800,
     height: 600,
-    titleBarStyle: "hiddenInset",
     show: false,
     fullscreenable: false,
+    frame: false,
     webPreferences: {
       nodeIntegration: true,
     },
@@ -142,4 +149,19 @@ if (isDevelopment) {
 
 ipcMain.on("get-user-data-path", (event) => {
   event.returnValue = app.getPath("userData");
+});
+
+// Dark mode
+function updateDarkMode() {
+  if (win) {
+    win.send("dark-mode", nativeTheme.shouldUseDarkColors);
+  }
+}
+
+nativeTheme.on("updated", () => {
+  updateDarkMode();
+});
+
+ipcMain.on("get-dark-mode", () => {
+  updateDarkMode();
 });

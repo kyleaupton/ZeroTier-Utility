@@ -97,6 +97,83 @@ export function API() {
       }
     });
 
+    ipcMain.on("add-authtoken", (event, arg) => {
+      try {
+        db.get("auth")
+          .get("authTokens")
+          .push(arg)
+          .write();
+
+        db.get("auth")
+          .set("currentAuthToken", arg.authtoken)
+          .write();
+        event.returnValue = "Ok";
+      } catch (error) {
+        event.returnValue = error;
+      }
+    });
+
+    ipcMain.on("remove-authtoken", (event, arg) => {
+      try {
+        db.get("auth")
+          .get("authTokens")
+          .remove({ authtoken: arg })
+          .write();
+
+        const current = db
+          .get("auth")
+          .get("currentAuthToken")
+          .value();
+
+        console.log(current);
+
+        if (current === arg) {
+          const temp = db
+            .get("auth")
+            .get("authTokens[0].authtoken")
+            .value();
+
+          console.log(temp);
+
+          if (temp) {
+            db.get("auth")
+              .set("currentAuthToken", temp)
+              .write();
+          } else {
+            db.get("auth")
+              .set("currentAuthToken", "")
+              .write();
+          }
+        }
+
+        event.returnValue = "Ok";
+      } catch (error) {
+        event.returnvalue = error;
+      }
+    });
+
+    ipcMain.on("get-current-authtoken", (event) => {
+      try {
+        event.returnValue = db
+          .get("auth")
+          .get("currentAuthToken")
+          .value();
+      } catch (error) {
+        event.returnValue = error;
+      }
+    });
+
+    ipcMain.on("set-current-authtoken", (event, arg) => {
+      try {
+        db.get("auth")
+          .set("currentAuthToken", arg)
+          .write();
+        event.returnValue = "Ok";
+      } catch (error) {
+        event.returnvalue = error;
+      }
+    });
+
     return resolve();
   });
 }

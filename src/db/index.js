@@ -11,6 +11,12 @@ if (!fs.existsSync(userDataPath)) {
 const adapter = new FileSync(`${userDataPath}/db.json`);
 const db = low(adapter);
 
-db.defaults({ auth: { authTokens: [] } }).write();
+db.defaults({
+  auth: {
+    authTokens: [],
+    currentAuthToken: "",
+  },
+  favorites: [],
+}).write();
 
 export default db;

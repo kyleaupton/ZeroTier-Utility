@@ -17,12 +17,15 @@
     "core-js": "^3.6.5",
     "electron-positioner": "^4.1.0",
     "lowdb": "^1.0.0",
+    "roboto-fontface": "*",
     "sudo-prompt": "^9.2.1",
     "vue": "^2.6.11",
     "vue-router": "^3.4.3",
+    "vuetify": "^2.2.11",
     "vuex": "^3.5.1"
   },
   "devDependencies": {
+    "@mdi/font": "^3.9.97",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
@@ -31,8 +34,12 @@
     "electron-devtools-installer": "^3.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
+    "sass": "^1.19.0",
+    "sass-loader": "^8.0.0",
     "vue-cli-plugin-electron-builder": "~2.0.0-rc.4",
-    "vue-template-compiler": "^2.6.11"
+    "vue-cli-plugin-vuetify": "~2.0.7",
+    "vue-template-compiler": "^2.6.11",
+    "vuetify-loader": "^1.3.0"
   },
   "eslintConfig": {
     "root": true,

@@ -6,13 +6,24 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    meta: {
+      darkMode: true,
+    },
     currentAuthToken: "",
-    networks: null,
+    allNetworks: null,
   },
 
   mutations: {
+    storeDarkMode(state, darkMode) {
+      state.meta.darkMode = darkMode;
+    },
+
     storeNetworks(state, networks) {
-      state.networks = networks;
+      state.allNetworks = networks;
+    },
+
+    storeCurrentAuthToken(state, currentAuthToken) {
+      this.state.currentAuthToken = currentAuthToken;
     },
   },
 
@@ -22,6 +33,28 @@ export default new Vuex.Store({
         context.commit("storeNetworks", arg);
       });
       ipcRenderer.send("bootstrap");
+    },
+
+    getCurrentAuthToken(context) {
+      context.commit(
+        "storeCurrentAuthToken",
+        ipcRenderer.sendSync("get-current-authtoken")
+      );
+    },
+
+    setCurrentAuthToken(context, authtoken) {
+      ipcRenderer.sendSync("set-current-authtoken", authtoken);
+      context.dispatch("getCurrentAuthToken");
+    },
+
+    addAuthToken(context, authtoken) {
+      ipcRenderer.sendSync("add-authtoken", authtoken);
+      context.dispatch("getCurrentAuthToken");
+    },
+
+    removeAuthToken(context, authtoken) {
+      ipcRenderer.sendSync("remove-authtoken", authtoken);
+      context.dispatch("getCurrentAuthToken");
     },
   },
 });
