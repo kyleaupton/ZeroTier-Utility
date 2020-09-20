@@ -168,6 +168,36 @@ export function API() {
       }
     });
 
+    ipcMain.on("get-favorites", (event) => {
+      try {
+        event.returnValue = db.get("favorites").value();
+      } catch (error) {
+        event.returnvalue = error;
+      }
+    });
+
+    ipcMain.on("add-favorite", (event, arg) => {
+      try {
+        db.get("favorites")
+          .push(arg)
+          .write();
+        event.returnValue = "Ok";
+      } catch (error) {
+        event.returnValue = error;
+      }
+    });
+
+    ipcMain.on("remove-favorite", (event, arg) => {
+      try {
+        db.get("favorites")
+          .pull(arg)
+          .write();
+        event.returnValue = "Ok";
+      } catch (error) {
+        event.returnValue = error;
+      }
+    });
+
     return resolve();
   });
 }

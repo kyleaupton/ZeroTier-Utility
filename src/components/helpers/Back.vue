@@ -1,10 +1,8 @@
 <template>
-  <div class="back-button-container-main">
+  <div v-if="show" class="back-button-container-main" :style="style">
     <v-divider />
     <div class="back-button-container">
-      <v-btn v-if="show" class="back-button" outlined @click="$router.go(-1)"
-        >back</v-btn
-      >
+      <v-btn class="back-button" outlined @click="$router.go(-1)">back</v-btn>
     </div>
   </div>
 </template>
@@ -13,9 +11,25 @@
 export default {
   name: "Back",
 
+  created() {},
+
   computed: {
     show() {
       return this.$route.meta.showBack;
+    },
+
+    color() {
+      if (this.$vuetify.theme.dark) {
+        return this.$vuetify.theme.themes.dark.warning;
+      } else {
+        return this.$vuetify.theme.themes.light.warning;
+      }
+    },
+
+    style() {
+      return {
+        "--background-color": this.color,
+      };
     },
   },
 };
@@ -23,12 +37,13 @@ export default {
 
 <style>
 .back-button-container-main {
-  position: absolute;
+  position: sticky;
   left: 0;
   bottom: 0;
   width: 100%;
   display: flex;
   flex-direction: column;
+  background-color: var(--background-color);
 }
 
 .back-button-container {

@@ -1,10 +1,22 @@
 <template>
   <div class="dashboard-container">
     <div v-if="loaded">
-      <div class="dashboard-title">My networks</div>
-      <div class="dashboard-network-container">
-        <div v-for="network in networks" :key="network.id">
-          <Network class="dashboard-network" :item="network" />
+      <div class="dashboard-content-container">
+        <div class="dashboard-title">My networks</div>
+        <div class="dashboard-network-container">
+          <div v-for="network in networks" :key="network.id">
+            <DashboardNetwork class="dashboard-network" :item="network" />
+          </div>
+        </div>
+        <div class="dashboard-title">Favorites</div>
+        <div class="dashboard-favorites-container">
+          <div
+            class="dashboard-favorites-item"
+            v-for="fav in favorites"
+            :key="fav.id"
+          >
+            <Peer :item="fav" />
+          </div>
         </div>
       </div>
     </div>
@@ -15,17 +27,21 @@
 </template>
 
 <script>
-import Network from "../components/dashboard/Network";
+import DashboardNetwork from "../components/dashboard/Dashboard-Network";
+// import DashboardFavorite from "../components/dashboard/Dashboard-Favorite";
+import Peer from "../components/network/Peer";
 
 export default {
   name: "Dashboard",
 
   components: {
-    Network,
+    DashboardNetwork,
+    // DashboardFavorite,
+    Peer,
   },
 
   created() {
-    // console.log(this.$store.state.allNetworks);
+    console.log(this.favorites);
   },
 
   computed: {
@@ -36,6 +52,27 @@ export default {
     loaded() {
       return this.$store.state.allNetworks.loaded;
     },
+
+    favorites() {
+      let payload = [];
+      const baseFavs = this.$store.state.favorites;
+      const networks = this.$store.state.allNetworks.items;
+
+      baseFavs.forEach((fav) => {
+        let items = fav.split("-");
+        const foundNetwork = networks.find((x) => x.id === items[0]);
+        if (foundNetwork) {
+          const foundPeer = foundNetwork.peers.find((y) => y.id === fav);
+          if (foundPeer) {
+            payload.push({
+              networkData: foundNetwork,
+              ...foundPeer,
+            });
+          }
+        }
+      });
+      return payload;
+    },
   },
 };
 </script>
@@ -43,6 +80,11 @@ export default {
 <style>
 .dashboard-container {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-content-container {
   display: flex;
   flex-direction: column;
 }
@@ -56,8 +98,18 @@ export default {
   overflow-y: scroll;
 }
 
+.dashboard-favorites-container {
+  display: flex;
+  flex-direction: column;
+  margin: 0 8px 0 8px;
+}
+
 .dashboard-network {
   margin: 0 0 0 8px;
   float: left;
+}
+
+.dashboard-favorites-item {
+  margin: 0 0 8px 0;
 }
 </style>

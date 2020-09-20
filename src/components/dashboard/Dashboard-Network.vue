@@ -18,7 +18,7 @@
 
 <script>
 export default {
-  name: "Network",
+  name: "Dashboard-Network",
 
   props: ["item"],
 };
