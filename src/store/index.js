@@ -10,7 +10,10 @@ export default new Vuex.Store({
       darkMode: true,
     },
     currentAuthToken: "",
-    allNetworks: null,
+    allNetworks: {
+      items: null,
+      loaded: false,
+    },
   },
 
   mutations: {
@@ -19,7 +22,8 @@ export default new Vuex.Store({
     },
 
     storeNetworks(state, networks) {
-      state.allNetworks = networks;
+      state.allNetworks.items = networks;
+      state.allNetworks.loaded = true;
     },
 
     storeCurrentAuthToken(state, currentAuthToken) {

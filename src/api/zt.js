@@ -49,47 +49,41 @@ export function API() {
           method: "GET",
         });
 
-        // Then get lists of all networks from all zt authtokens.
-        const authtokens = db
+        // Then get current authtoken
+        const authtoken = db
           .get("auth")
-          .get("authTokens")
+          .get("currentAuthToken")
           .value();
 
-        const networks = await Promise.all(
-          authtokens.map(async (x) => {
-            return await sendRequest({
-              method: "GET",
-              url: "/network",
-              authtoken: x.authtoken,
-            });
+        console.log(authtoken);
+
+        // Get all the network for current authtoken
+        const networks = await sendRequest({
+          method: "GET",
+          url: "/network",
+          authtoken,
+        });
+
+        // Now that we have the networks, simply transverse them and map
+        // subscribed networks with networks
+        let payload = [];
+        await Promise.all(
+          networks.map(async (network) => {
+            const find = subscribedNetworks.find((x) => x.id === network.id);
+            if (find) {
+              // Now lets find all of the peers on this network
+              const response = await sendRequest({
+                method: "GET",
+                url: `/network/${network.id}/member`,
+                authtoken,
+              });
+              payload.push({
+                ...network,
+                peers: response,
+              });
+            }
           })
         );
-
-        // We currently have a list of:
-        // 1) Networks this client is subscribed to
-        // 2) A list of networks from every api token
-        // We now need to map the two together, and return
-        // something that looks like the following...
-        // TODO: write "the following".
-
-        let payload = [];
-
-        for (let i = 0; i < authtokens.length; i++) {
-          let temp = {
-            ...authtokens[i],
-            networks: [],
-          };
-
-          for (let k = 0; k < networks[i].length; k++) {
-            const found = subscribedNetworks.find(
-              (element) => element.nwid === networks[i][k].id
-            );
-            if (found) {
-              temp.networks.push(networks[i][k]);
-            }
-          }
-          payload.push(temp);
-        }
 
         event.reply("bootstrap-resopnse", payload);
       } catch (error) {

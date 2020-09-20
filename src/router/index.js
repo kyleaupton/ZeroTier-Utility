@@ -9,6 +9,18 @@ const routes = [
     name: "Home",
     component: () => import("../views/Dashboard"),
   },
+  {
+    path: "/network",
+    name: "Networks",
+  },
+  {
+    path: "/network/:id",
+    name: "Network",
+    component: () => import("../views/Network"),
+    meta: {
+      showBack: true,
+    },
+  },
 ];
 
 const router = new VueRouter({
