@@ -1,22 +1,22 @@
 <template>
   <div id="app">
+    <Header />
     <router-view />
   </div>
 </template>
 
 <script>
-const { ipcRenderer } = window.require("electron");
+import Header from "./components/Header";
 
 export default {
   name: "App",
 
-  components: {},
+  components: {
+    Header,
+  },
 
   created() {
-    ipcRenderer.on("bootstrap-resopnse", (event, arg) => {
-      console.log(arg);
-    });
-    ipcRenderer.send("bootstrap");
+    this.$store.dispatch("getNetworks");
   },
 };
 </script>
