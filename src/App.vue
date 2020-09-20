@@ -1,19 +1,24 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <router-view />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+const { ipcRenderer } = window.require("electron");
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  name: "App",
+
+  components: {},
+
+  created() {
+    ipcRenderer.on("bootstrap-resopnse", (event, arg) => {
+      console.log(arg);
+    });
+    ipcRenderer.send("bootstrap");
+  },
+};
 </script>
 
 <style>

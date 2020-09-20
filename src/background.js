@@ -2,10 +2,11 @@
 
 import path from "path";
 
-import { app, protocol, BrowserWindow, Tray } from "electron";
+import { app, protocol, BrowserWindow, Tray, ipcMain } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import Positioner from "electron-positioner";
+import { API, getLocalAuthToken } from "./api/zt";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -54,7 +55,7 @@ function createWindow() {
     show: false,
     fullscreenable: false,
     webPreferences: {
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+      nodeIntegration: true,
     },
   });
 
@@ -117,6 +118,8 @@ app.on("ready", async () => {
       console.error("Vue Devtools failed to install:", e.toString());
     }
   }
+  await getLocalAuthToken();
+  API();
   createTray();
   createWindow();
   showWindow();
@@ -136,3 +139,7 @@ if (isDevelopment) {
     });
   }
 }
+
+ipcMain.on("get-user-data-path", (event) => {
+  event.returnValue = app.getPath("userData");
+});
