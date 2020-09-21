@@ -25,14 +25,12 @@ export default {
   },
 
   created() {
-    this.$store.dispatch("getNetworks");
-    this.$store.dispatch("getFavorites");
+    this.$store.dispatch("bootstrap", { vm: this });
     ipcRenderer.send("get-dark-mode");
     ipcRenderer.on("dark-mode", (event, arg) => {
       this.$store.commit("storeDarkMode", arg);
       this.$vuetify.theme.dark = arg;
     });
-    this.$store.dispatch("getCurrentAuthToken");
   },
 };
 </script>

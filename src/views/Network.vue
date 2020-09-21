@@ -4,6 +4,7 @@
       <div>{{ network.config.name }}</div>
       <div class="network-item">
         <v-text-field
+          v-model="filter"
           label="Search for a peer"
           :hide-details="true"
           solo
@@ -11,11 +12,7 @@
         />
       </div>
       <div>
-        <div
-          v-for="peer in network.peers"
-          :key="peer.nodeId"
-          class="network-item"
-        >
+        <div v-for="peer in items" :key="peer.nodeId" class="network-item">
           <Peer :item="peer" />
         </div>
       </div>
@@ -32,6 +29,12 @@ export default {
 
   components: {
     Peer,
+  },
+
+  data() {
+    return {
+      filter: "",
+    };
   },
 
   created() {
@@ -51,6 +54,17 @@ export default {
 
     loaded() {
       return this.$store.state.allNetworks.loaded;
+    },
+
+    items() {
+      return this.network.peers.filter((peer) => {
+        const filter = this.filter.toLowerCase();
+        if (
+          peer.name.toLowerCase().includes(filter) ||
+          peer.description.toLowerCase().includes(filter)
+        )
+          return true;
+      });
     },
   },
 

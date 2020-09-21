@@ -11,6 +11,7 @@
         </div>
         <div class="peer-name">{{ name }}</div>
         <div class="peer-desc">{{ item.description }}</div>
+        <div v-if="!isOnline" class="peer-last-seen">{{ lastSeen }}</div>
       </div>
       <div class="peer-content-item">
         <div class="peer-content-item-container">
@@ -31,6 +32,8 @@
 </template>
 
 <script>
+import moment from "moment";
+
 import IpAddress from "./IpAddress";
 
 export default {
@@ -40,7 +43,20 @@ export default {
     IpAddress,
   },
 
-  created() {},
+  data() {
+    return {
+      lastSeen: "",
+    };
+  },
+
+  created() {
+    if (!this.isOnline) {
+      this.getLastSeen();
+      setInterval(() => {
+        this.getLastSeen();
+      }, 1000);
+    }
+  },
 
   computed: {
     statusColor() {
@@ -62,6 +78,10 @@ export default {
     isFavorite() {
       return !!this.$store.state.favorites.find((x) => x === this.item.id);
     },
+
+    isOnline() {
+      return this.item.online;
+    },
   },
 
   methods: {
@@ -73,6 +93,10 @@ export default {
         // add favorite
         this.$store.dispatch("addFavorite", this.item.id);
       }
+    },
+
+    getLastSeen() {
+      this.lastSeen = `Last seen ${moment(this.item.lastOnline).fromNow()}`;
     },
   },
 
@@ -112,7 +136,8 @@ export default {
   font-size: 14px;
 }
 
-.peer-desc {
+.peer-desc,
+.peer-last-seen {
   font-size: 12px;
   font-weight: 300;
 }

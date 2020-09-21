@@ -119,15 +119,11 @@ export function API() {
           .get("currentAuthToken")
           .value();
 
-        console.log(current);
-
         if (current === arg) {
           const temp = db
             .get("auth")
             .get("authTokens[0].authtoken")
             .value();
-
-          console.log(temp);
 
           if (temp) {
             db.get("auth")
@@ -159,12 +155,22 @@ export function API() {
 
     ipcMain.on("set-current-authtoken", (event, arg) => {
       try {
-        db.get("auth")
-          .set("currentAuthToken", arg)
-          .write();
+        console.log(`ddeeeggguuubbb: ${arg}`);
+        db.set("auth.currentAuthToken", arg).write();
         event.returnValue = "Ok";
       } catch (error) {
         event.returnvalue = error;
+      }
+    });
+
+    ipcMain.on("get-all-authtokens", (event) => {
+      try {
+        event.returnValue = db
+          .get("auth")
+          .get("authTokens")
+          .value();
+      } catch (error) {
+        event.returnValue = error;
       }
     });
 

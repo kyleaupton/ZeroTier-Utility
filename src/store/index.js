@@ -10,6 +10,7 @@ export default new Vuex.Store({
       darkMode: true,
     },
     currentAuthToken: "",
+    allAuthTokens: [],
     allNetworks: {
       items: null,
       loaded: false,
@@ -36,6 +37,10 @@ export default new Vuex.Store({
       this.state.currentAuthToken = currentAuthToken;
     },
 
+    storeAllAuthTokens(state, authtokens) {
+      this.state.allAuthTokens = authtokens;
+    },
+
     storeAlert(state, alert) {
       state.alerts.push(alert);
       setTimeout(() => {
@@ -45,9 +50,14 @@ export default new Vuex.Store({
   },
 
   actions: {
+    bootstrap(context) {
+      context.dispatch("getNetworks");
+      context.dispatch("getFavorites");
+      context.dispatch("getCurrentAuthToken");
+    },
+
     getNetworks(context) {
       ipcRenderer.on("bootstrap-resopnse", (event, arg) => {
-        console.log(arg);
         context.commit("storeNetworks", arg);
       });
       ipcRenderer.send("bootstrap");
@@ -76,17 +86,24 @@ export default new Vuex.Store({
 
     setCurrentAuthToken(context, authtoken) {
       ipcRenderer.sendSync("set-current-authtoken", authtoken);
-      context.dispatch("getCurrentAuthToken");
+      context.dispatch("bootstrap");
     },
 
-    addAuthToken(context, authtoken) {
+    addAuthToken(context, authtoken, vm) {
       ipcRenderer.sendSync("add-authtoken", authtoken);
-      context.dispatch("getCurrentAuthToken");
+      context.dispatch("bootstrap", vm);
     },
 
-    removeAuthToken(context, authtoken) {
+    removeAuthToken(context, authtoken, vm) {
       ipcRenderer.sendSync("remove-authtoken", authtoken);
-      context.dispatch("getCurrentAuthToken");
+      context.dispatch("bootstrap", vm);
+    },
+
+    getAllAuthTokens(context) {
+      context.commit(
+        "storeAllAuthTokens",
+        ipcRenderer.sendSync("get-all-authtokens")
+      );
     },
 
     addAlert(context, alert) {

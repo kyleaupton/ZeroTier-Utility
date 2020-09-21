@@ -28,7 +28,6 @@
 
 <script>
 import DashboardNetwork from "../components/dashboard/Dashboard-Network";
-// import DashboardFavorite from "../components/dashboard/Dashboard-Favorite";
 import Peer from "../components/network/Peer";
 
 export default {
@@ -36,12 +35,7 @@ export default {
 
   components: {
     DashboardNetwork,
-    // DashboardFavorite,
     Peer,
-  },
-
-  created() {
-    console.log(this.favorites);
   },
 
   computed: {
@@ -54,24 +48,28 @@ export default {
     },
 
     favorites() {
-      let payload = [];
-      const baseFavs = this.$store.state.favorites;
-      const networks = this.$store.state.allNetworks.items;
+      if (this.loaded) {
+        let payload = [];
+        const baseFavs = this.$store.state.favorites;
+        const networks = this.$store.state.allNetworks.items;
 
-      baseFavs.forEach((fav) => {
-        let items = fav.split("-");
-        const foundNetwork = networks.find((x) => x.id === items[0]);
-        if (foundNetwork) {
-          const foundPeer = foundNetwork.peers.find((y) => y.id === fav);
-          if (foundPeer) {
-            payload.push({
-              networkData: foundNetwork,
-              ...foundPeer,
-            });
+        baseFavs.forEach((fav) => {
+          let items = fav.split("-");
+          const foundNetwork = networks.find((x) => x.id === items[0]);
+          if (foundNetwork) {
+            const foundPeer = foundNetwork.peers.find((y) => y.id === fav);
+            if (foundPeer) {
+              payload.push({
+                networkData: foundNetwork,
+                ...foundPeer,
+              });
+            }
           }
-        }
-      });
-      return payload;
+        });
+        return payload;
+      } else {
+        return [];
+      }
     },
   },
 };

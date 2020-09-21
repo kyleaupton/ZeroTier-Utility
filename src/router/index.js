@@ -21,6 +21,14 @@ const routes = [
       showBack: true,
     },
   },
+  {
+    path: "/authtoken",
+    name: "Authtoken",
+    component: () => import("../views/NewAuthtoken"),
+    meta: {
+      showBack: true,
+    },
+  },
 ];
 
 const router = new VueRouter({
