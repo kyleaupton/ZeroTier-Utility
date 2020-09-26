@@ -11,6 +11,8 @@ import {
   ipcMain,
   nativeTheme,
   screen,
+  // eslint-disable-next-line no-unused-vars
+  Notification,
 } from "electron";
 import { autoUpdater } from "electron-updater";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
@@ -20,6 +22,8 @@ import { API, getLocalAuthToken } from "./api/zt";
 
 autoUpdater.logger = require("electron-log");
 autoUpdater.logger.transports.file.level = "info";
+app.setAppUserModelId("com.electron.zerotier-utility");
+app.setAsDefaultProtocolClient("zerotier-utility");
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
