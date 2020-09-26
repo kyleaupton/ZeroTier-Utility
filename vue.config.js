@@ -14,6 +14,9 @@ module.exports = {
           target: "nsis",
           icon: "build/zerotier-utility-app-icon.ico",
         },
+        nsis: {
+          oneClick: "true",
+        },
       },
     },
   },
