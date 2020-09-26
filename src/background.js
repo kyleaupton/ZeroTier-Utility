@@ -20,6 +20,11 @@ import { API, getLocalAuthToken } from "./api/zt";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
+// Hide dock on mac
+if (process.platform === "darwin") {
+  app.dock.hide();
+}
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win = null;
@@ -88,6 +93,7 @@ function createWindow() {
     show: false,
     fullscreenable: false,
     frame: false,
+    skipTaskbar: true,
     webPreferences: {
       nodeIntegration: true,
     },

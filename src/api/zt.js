@@ -260,8 +260,6 @@ export function getLocalAuthToken() {
         ? `type ${workingDirectory}\\authtoken.secret`
         : `cat ${workingDirectory}/authtoken.secret`;
 
-    console.log(command);
-
     sudo.exec(
       command,
       {

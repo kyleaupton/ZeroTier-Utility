@@ -77,6 +77,10 @@ export default {
 </script>
 
 <style>
+::-webkit-scrollbar {
+  width: 0px;
+}
+
 .scroll-overflow-y {
   overflow-y: scroll;
 }
