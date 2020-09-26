@@ -11,6 +11,7 @@ module.exports = {
           icon: "build/zerotier-utility-app-icon.icns",
         },
         win: {
+          target: "nsis",
           icon: "build/zerotier-utility-app-icon.ico",
         },
       },
