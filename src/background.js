@@ -10,6 +10,7 @@ import {
   Tray,
   ipcMain,
   nativeTheme,
+  screen
 } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
@@ -37,6 +38,30 @@ function showWindow() {
     const trayBounds = tray.getBounds();
     let position = "trayCenter";
 
+    if (process.platform === "win32") {
+      const trayScreen = screen.getDisplayNearestPoint({
+        x: trayBounds.x,
+        y: trayBounds.y,
+      });
+
+      const workArea = trayScreen.workArea;
+      const screenBounds = trayScreen.bounds;
+
+      if (workArea.x > 0) {
+        // TASKBAR LEFT
+        position = 'bottomLeft';
+      } else if (workArea.y > 0) {
+        // TASKBAR TOP
+        position = 'topRight';
+      } else if (workArea.width < screenBounds.width) {
+        // TASKBAR RIGHT
+        position = 'bottomRight';
+      } else {
+        // TASKBAR BOTTOM
+        position = 'bottomRight';
+      }
+    }
+
     const positioner = new Positioner(win);
 
     win.setMinimumSize(400, 600);
@@ -46,6 +71,7 @@ function showWindow() {
     positioner.move(position, trayBounds);
   }
 
+  console.log("got here");
   win.show();
   win.focus();
 }

@@ -243,7 +243,7 @@ export function getLocalAuthToken() {
         break;
 
       case "win32":
-        workingDirectory = path.join("/ProgramData", "ZeroTier", "One");
+        workingDirectory = path.join("\\ProgramData", "ZeroTier", "One");
         break;
 
       case "linux":
@@ -255,9 +255,9 @@ export function getLocalAuthToken() {
         workingDirectory = path.join("/var", "db", "zerotier-one");
     }
 
-    sudo.exec(
-      `cat "${workingDirectory}/authtoken.secret"`,
-      {
+    const command = os.platform() === "win32" ? `type ${workingDirectory}\\authtoken.secret` : `cat ${workingDirectory}/authtoken.secret`;
+
+    sudo.exec(command,{
         name: "ZeroTier Utility",
       },
       (error, stdout) => {
