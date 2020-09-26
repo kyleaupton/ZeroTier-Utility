@@ -18,6 +18,9 @@ import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import Positioner from "electron-positioner";
 import { API, getLocalAuthToken } from "./api/zt";
 
+autoUpdater.logger = require("electron-log");
+autoUpdater.logger.transports.file.level = "info";
+
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Hide dock on mac
