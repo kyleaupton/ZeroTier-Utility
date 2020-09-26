@@ -215,3 +215,14 @@ nativeTheme.on("updated", () => {
 ipcMain.on("get-dark-mode", () => {
   updateDarkMode();
 });
+
+// Update
+autoUpdater.on("update-downloaded", () => {
+  // Not tested
+  win.send("update-available", true);
+});
+
+ipcMain.on("apply-update", () => {
+  // Works, tested
+  autoUpdater.quitAndInstall();
+});

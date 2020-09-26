@@ -3,6 +3,7 @@
     <v-app>
       <Header v-if="!showInit" />
       <v-main>
+        <Update v-if="updateAvail" />
         <component :is="component" />
       </v-main>
       <Alerts />
@@ -15,6 +16,7 @@ import Header from "./components/Header";
 import Back from "./components/helpers/Back";
 import Alerts from "./components/helpers/Alerts";
 import NewAuthtoken from "./views/NewAuthtoken";
+import Update from "./components/helpers/Update";
 const { ipcRenderer } = window.require("electron");
 
 export default {
@@ -25,6 +27,7 @@ export default {
     Back,
     Alerts,
     NewAuthtoken,
+    Update,
   },
 
   created() {
@@ -43,6 +46,11 @@ export default {
       console.log("got to interval");
       this.$store.dispatch("refresh");
     }, 120000);
+
+    // Updating
+    ipcRenderer.on("update-available", (event, arg) => {
+      this.$store.commit("storeUpdateAvail", arg);
+    });
   },
 
   computed: {
@@ -60,6 +68,10 @@ export default {
 
     showBack() {
       return this.$route.meta.showBack;
+    },
+
+    updateAvail() {
+      return this.$store.state.meta.updateAvailable;
     },
   },
 
@@ -79,9 +91,5 @@ export default {
 <style>
 ::-webkit-scrollbar {
   width: 0px;
-}
-
-.scroll-overflow-y {
-  overflow-y: scroll;
 }
 </style>

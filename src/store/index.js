@@ -13,6 +13,7 @@ export default new Vuex.Store({
         status: "",
         statusText: "",
       },
+      updateAvailable: false,
     },
     currentAuthToken: "",
     allAuthTokens: [],
@@ -78,6 +79,10 @@ export default new Vuex.Store({
       state.meta.errorState.error = false;
       state.meta.errorState.status = "";
       state.meta.errorState.statusText = "";
+    },
+
+    storeUpdateAvail(state, value) {
+      state.meta.updateAvailable = value;
     },
   },
 
