@@ -10,8 +10,9 @@ import {
   Tray,
   ipcMain,
   nativeTheme,
-  screen
+  screen,
 } from "electron";
+import { autoUpdater } from "electron-updater";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import Positioner from "electron-positioner";
@@ -49,16 +50,16 @@ function showWindow() {
 
       if (workArea.x > 0) {
         // TASKBAR LEFT
-        position = 'bottomLeft';
+        position = "bottomLeft";
       } else if (workArea.y > 0) {
         // TASKBAR TOP
-        position = 'topRight';
+        position = "topRight";
       } else if (workArea.width < screenBounds.width) {
         // TASKBAR RIGHT
-        position = 'bottomRight';
+        position = "bottomRight";
       } else {
         // TASKBAR BOTTOM
-        position = 'bottomRight';
+        position = "bottomRight";
       }
     }
 
@@ -71,7 +72,6 @@ function showWindow() {
     positioner.move(position, trayBounds);
   }
 
-  console.log("got here");
   win.show();
   win.focus();
 }
@@ -101,6 +101,7 @@ function createWindow() {
     createProtocol("app");
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
+    autoUpdater.checkForUpdatesAndNotify();
   }
 
   win.on("closed", () => {

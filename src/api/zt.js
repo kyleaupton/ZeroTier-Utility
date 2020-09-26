@@ -1,4 +1,4 @@
-import { ipcMain } from "electron";
+import { app, ipcMain } from "electron";
 import axios from "axios";
 import os from "os";
 import path from "path";
@@ -236,7 +236,7 @@ export function getLocalAuthToken() {
       case "darwin":
         workingDirectory = path.join(
           "/Library",
-          "Application Support",
+          "Application\\ Support",
           "ZeroTier",
           "One"
         );
@@ -255,14 +255,21 @@ export function getLocalAuthToken() {
         workingDirectory = path.join("/var", "db", "zerotier-one");
     }
 
-    const command = os.platform() === "win32" ? `type ${workingDirectory}\\authtoken.secret` : `cat ${workingDirectory}/authtoken.secret`;
+    const command =
+      os.platform() === "win32"
+        ? `type ${workingDirectory}\\authtoken.secret`
+        : `cat ${workingDirectory}/authtoken.secret`;
 
-    sudo.exec(command,{
+    console.log(command);
+
+    sudo.exec(
+      command,
+      {
         name: "ZeroTier Utility",
       },
       (error, stdout) => {
         if (error) {
-          throw new Error(error);
+          app.exit();
         }
         localAuthtoken = stdout;
         return resolve();

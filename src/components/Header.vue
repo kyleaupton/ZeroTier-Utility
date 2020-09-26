@@ -2,7 +2,7 @@
   <v-app-bar dense :app="true">
     <v-menu>
       <template v-slot:activator="{ attrs, on }">
-        <v-btn icon v-bind="attrs" v-on="on">
+        <v-btn icon small v-bind="attrs" v-on="on">
           <v-icon>mdi-dots-vertical</v-icon>
         </v-btn>
       </template>
@@ -52,7 +52,7 @@
     </v-menu>
 
     <div v-if="back" @click="handleBack()">
-      <v-btn icon>
+      <v-btn icon small>
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
     </div>
@@ -60,7 +60,7 @@
     <v-spacer />
 
     <p class="header-last-refreshed">{{ lastRefreshed }}</p>
-    <v-btn icon @click="handleRefresh()">
+    <v-btn icon small @click="handleRefresh()">
       <v-icon>mdi-refresh</v-icon>
     </v-btn>
   </v-app-bar>
