@@ -46,8 +46,10 @@ export default {
         authtoken: this.authtoken,
         nickname: this.nickname,
       });
-      this.$store.dispatch("bootstrap", { vm: this });
-      this.$router.push("/");
+      this.$store.dispatch("bootstrap");
+      if (this.$route.path !== "/") {
+        this.$router.push("/");
+      }
     },
   },
 };

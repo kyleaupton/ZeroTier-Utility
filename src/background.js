@@ -1,4 +1,5 @@
 "use strict";
+/* global __static */
 
 import path from "path";
 
@@ -88,7 +89,15 @@ function createWindow() {
 }
 
 function createTray() {
-  const filePath = path.join(__dirname, "assets", "IconTemplate.png");
+  if (tray) {
+    tray.destroy();
+    tray = null;
+  }
+
+  const iconName = nativeTheme.shouldUseDarkColors
+    ? "zerotier-utility-icon-white@2x.png"
+    : "zerotier-utility-icon-dark@2x.png";
+  const filePath = path.join(__static, iconName);
   tray = new Tray(filePath);
   tray.on("click", () => {
     showWindow();
@@ -159,6 +168,7 @@ function updateDarkMode() {
 }
 
 nativeTheme.on("updated", () => {
+  createTray();
   updateDarkMode();
 });
 

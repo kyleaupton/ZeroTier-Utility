@@ -8,6 +8,11 @@ export default new Vuex.Store({
   state: {
     meta: {
       darkMode: true,
+      errorState: {
+        error: false,
+        status: "",
+        statusText: "",
+      },
     },
     currentAuthToken: "",
     allAuthTokens: [],
@@ -15,8 +20,10 @@ export default new Vuex.Store({
       items: null,
       loaded: false,
     },
+    lastRefreshed: "",
     favorites: [],
     alerts: [],
+    showInit: false,
   },
 
   mutations: {
@@ -24,9 +31,18 @@ export default new Vuex.Store({
       state.meta.darkMode = darkMode;
     },
 
+    storeShowInit(state, arg) {
+      state.showInit = arg;
+    },
+
     storeNetworks(state, networks) {
       state.allNetworks.items = networks;
       state.allNetworks.loaded = true;
+    },
+
+    resetNetworks(state) {
+      state.allNetworks.items = [];
+      state.allNetworks.loaded = false;
     },
 
     storeFavorites(state, favorites) {
@@ -34,11 +50,15 @@ export default new Vuex.Store({
     },
 
     storeCurrentAuthToken(state, currentAuthToken) {
-      this.state.currentAuthToken = currentAuthToken;
+      state.currentAuthToken = currentAuthToken;
     },
 
     storeAllAuthTokens(state, authtokens) {
-      this.state.allAuthTokens = authtokens;
+      state.allAuthTokens = authtokens;
+    },
+
+    storeLastRefreshed(state, arg) {
+      state.lastRefreshed = arg;
     },
 
     storeAlert(state, alert) {
@@ -47,19 +67,42 @@ export default new Vuex.Store({
         state.alerts.pop();
       }, 1500);
     },
+
+    storeError(state, error) {
+      state.meta.errorState.error = true;
+      state.meta.errorState.status = error.status;
+      state.meta.errorState.statusText = error.statusText;
+    },
+
+    resetError(state) {
+      state.meta.errorState.error = false;
+      state.meta.errorState.status = "";
+      state.meta.errorState.statusText = "";
+    },
   },
 
   actions: {
     bootstrap(context) {
-      context.dispatch("getNetworks");
+      context.commit("resetError");
+      context.dispatch("getLastRefreshed");
+      context.dispatch("getAllAuthTokens");
       context.dispatch("getFavorites");
-      context.dispatch("getCurrentAuthToken");
+      context.dispatch("getNetworks");
     },
 
     getNetworks(context) {
-      ipcRenderer.on("bootstrap-resopnse", (event, arg) => {
+      context.commit("resetNetworks");
+      ipcRenderer.once("bootstrap-resopnse", (event, arg) => {
+        console.log("got to bootstrap response");
         context.commit("storeNetworks", arg);
+        const now = new Date();
+        context.dispatch("setLastRefreshed", now.getTime());
+        context.dispatch("getLastRefreshed");
       });
+      ipcRenderer.once("bootstrap-response-error", (event, arg) => {
+        context.commit("storeError", arg);
+      });
+      console.log("sending bootstrap request");
       ipcRenderer.send("bootstrap");
     },
 
@@ -77,6 +120,11 @@ export default new Vuex.Store({
       context.dispatch("getFavorites");
     },
 
+    reOrderFavorites(context, favorites) {
+      ipcRenderer.sendSync("store-favorites", favorites);
+      context.dispatch("getFavorites");
+    },
+
     getCurrentAuthToken(context) {
       context.commit(
         "storeCurrentAuthToken",
@@ -86,17 +134,20 @@ export default new Vuex.Store({
 
     setCurrentAuthToken(context, authtoken) {
       ipcRenderer.sendSync("set-current-authtoken", authtoken);
-      context.dispatch("bootstrap");
+      context.dispatch("getCurrentAuthToken", authtoken);
+      context.dispatch("getAllAuthTokens");
     },
 
-    addAuthToken(context, authtoken, vm) {
+    addAuthToken(context, authtoken) {
       ipcRenderer.sendSync("add-authtoken", authtoken);
-      context.dispatch("bootstrap", vm);
+      context.dispatch("getCurrentAuthToken");
+      context.dispatch("getAllAuthTokens");
     },
 
-    removeAuthToken(context, authtoken, vm) {
+    removeAuthToken(context, authtoken) {
       ipcRenderer.sendSync("remove-authtoken", authtoken);
-      context.dispatch("bootstrap", vm);
+      context.dispatch("getCurrentAuthToken");
+      context.dispatch("getAllAuthTokens");
     },
 
     getAllAuthTokens(context) {
@@ -106,8 +157,23 @@ export default new Vuex.Store({
       );
     },
 
+    getLastRefreshed(context) {
+      context.commit(
+        "storeLastRefreshed",
+        ipcRenderer.sendSync("get-last-refreshed")
+      );
+    },
+
+    setLastRefreshed(context, arg) {
+      ipcRenderer.sendSync("set-last-refreshed", arg);
+    },
+
     addAlert(context, alert) {
       context.commit("storeAlert", alert);
+    },
+
+    refresh(context) {
+      context.dispatch("getNetworks");
     },
   },
 });

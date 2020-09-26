@@ -21,10 +21,13 @@
             </div>
           </div>
           <div>
-            <v-btn icon>
-              <v-icon @click="handleClick">{{ icon }}</v-icon>
+            <v-btn icon small @click="handleClick">
+              <v-icon>{{ icon }}</v-icon>
             </v-btn>
           </div>
+          <v-icon v-if="item.networkData" class="peer-handle"
+            >mdi-drag-vertical</v-icon
+          >
         </div>
       </div>
     </div>
@@ -160,5 +163,14 @@ export default {
 
 .peer-network-name {
   font-size: 14px;
+}
+
+.peer-handle-container {
+  position: absolute;
+  right: 0;
+}
+
+.peer-handle {
+  cursor: move;
 }
 </style>

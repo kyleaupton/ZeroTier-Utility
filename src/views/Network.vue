@@ -17,18 +17,22 @@
         </div>
       </div>
     </div>
-    <div v-else>Loading...</div>
+    <div v-else>
+      <Loading />
+    </div>
   </div>
 </template>
 
 <script>
 import Peer from "../components/network/Peer";
+import Loading from "../components/helpers/Loading";
 
 export default {
   name: "Network",
 
   components: {
     Peer,
+    Loading,
   },
 
   data() {
@@ -37,9 +41,7 @@ export default {
     };
   },
 
-  created() {
-    console.log(this.$store.state.allNetworks.items);
-  },
+  created() {},
 
   computed: {
     network() {
@@ -65,12 +67,6 @@ export default {
         )
           return true;
       });
-    },
-  },
-
-  watch: {
-    network() {
-      console.log(this.network);
     },
   },
 };

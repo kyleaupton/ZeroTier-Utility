@@ -10,10 +10,6 @@
 export default {
   name: "Alerts",
 
-  created() {
-    console.log(this.alerts);
-  },
-
   computed: {
     alerts() {
       return this.$store.state.alerts;

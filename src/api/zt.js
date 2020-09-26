@@ -11,34 +11,26 @@ export function API() {
   return new Promise((resolve) => {
     const url = "https://my.zerotier.com/api";
     async function sendRequest(param) {
-      try {
-        const response = await axios({
-          method: param.method || "GET",
-          url: `${url}${param.url}`,
-          headers: {
-            Authorization: `bearer ${param.authtoken}`,
-          },
-        });
-        return response.data;
-      } catch (error) {
-        throw new Error(error);
-      }
+      const response = await axios({
+        method: param.method || "GET",
+        url: `${url}${param.url}`,
+        headers: {
+          Authorization: `bearer ${param.authtoken}`,
+        },
+      });
+      return response.data;
     }
 
     const localPort = "9993";
     async function sendRequestLocal(param) {
-      try {
-        const response = await axios({
-          method: param.method || "GET",
-          url: `http://localhost:${localPort}${param.url}`,
-          headers: {
-            "X-ZT1-Auth": `${localAuthtoken}`,
-          },
-        });
-        return response.data;
-      } catch (error) {
-        throw new Error(error);
-      }
+      const response = await axios({
+        method: param.method || "GET",
+        url: `http://localhost:${localPort}${param.url}`,
+        headers: {
+          "X-ZT1-Auth": `${localAuthtoken}`,
+        },
+      });
+      return response.data;
     }
 
     ipcMain.on("bootstrap", async (event) => {
@@ -54,8 +46,6 @@ export function API() {
           .get("auth")
           .get("currentAuthToken")
           .value();
-
-        console.log(authtoken);
 
         // Get all the network for current authtoken
         const networks = await sendRequest({
@@ -87,7 +77,10 @@ export function API() {
 
         event.reply("bootstrap-resopnse", payload);
       } catch (error) {
-        event.reply("bootstrap-response", error);
+        event.reply("bootstrap-response-error", {
+          status: error.response.status,
+          statusText: error.response.statusText,
+        });
       }
     });
 
@@ -155,7 +148,6 @@ export function API() {
 
     ipcMain.on("set-current-authtoken", (event, arg) => {
       try {
-        console.log(`ddeeeggguuubbb: ${arg}`);
         db.set("auth.currentAuthToken", arg).write();
         event.returnValue = "Ok";
       } catch (error) {
@@ -171,6 +163,26 @@ export function API() {
           .value();
       } catch (error) {
         event.returnValue = error;
+      }
+    });
+
+    ipcMain.on("get-last-refreshed", (event) => {
+      try {
+        event.returnValue = db
+          .get("auth")
+          .get("lastRefreshed")
+          .value();
+      } catch (error) {
+        event.returnValue = event;
+      }
+    });
+
+    ipcMain.on("set-last-refreshed", (event, arg) => {
+      try {
+        db.set("auth.lastRefreshed", arg).write();
+        event.returnValue = "Ok";
+      } catch (error) {
+        event.returnValue = event;
       }
     });
 
@@ -198,6 +210,15 @@ export function API() {
         db.get("favorites")
           .pull(arg)
           .write();
+        event.returnValue = "Ok";
+      } catch (error) {
+        event.returnValue = error;
+      }
+    });
+
+    ipcMain.on("store-favorites", (event, arg) => {
+      try {
+        db.set("favorites", arg).write();
         event.returnValue = "Ok";
       } catch (error) {
         event.returnValue = error;

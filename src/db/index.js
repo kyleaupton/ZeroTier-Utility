@@ -15,6 +15,7 @@ db.defaults({
   auth: {
     authTokens: [],
     currentAuthToken: "",
+    lastRefreshed: "",
   },
   favorites: [],
 }).write();
