@@ -1,6 +1,12 @@
 {
   "name": "zerotier-utility",
   "version": "0.1.0",
+  "description": "Utility application for ZeroTier",
+  "author": {
+    "name": "Kyle Upton",
+    "email": "kyleaupton@gmail.com",
+    "url": "https://github.com/kyleaupton"
+  },
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
