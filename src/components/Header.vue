@@ -7,7 +7,11 @@
         </v-btn>
       </template>
       <v-list dense outlined subheader>
-        <v-subheader>Authtokens</v-subheader>
+        <v-subheader>
+          <div>Authtokens</div>
+          <v-spacer />
+          <div>v{{ pjson.version }}</div>
+        </v-subheader>
         <v-list-item v-for="(item, i) in items" :key="i">
           <div class="header-list-item-container">
             <div class="header-list-item-current header-list-item">
@@ -69,12 +73,15 @@
 <script>
 import moment from "moment";
 
+import pjson from "../../package.json";
+
 export default {
   name: "Header",
 
   data() {
     return {
       lastRefreshed: "",
+      pjson: pjson,
     };
   },
 
