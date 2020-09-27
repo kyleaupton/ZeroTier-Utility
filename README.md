@@ -10,7 +10,7 @@ This is only the v1 release with minimal features, expect more releases in the f
 
 ## Dashboard
 
-![alt text](readme/dashboard.png)
+![alt text](readme/dashboard.png =150x)
 
 ## Network view
 
