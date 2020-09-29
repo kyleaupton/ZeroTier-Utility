@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import crypto from "crypto";
 const { ipcRenderer } = window.require("electron");
 
 Vue.use(Vuex);
@@ -63,10 +64,14 @@ export default new Vuex.Store({
     },
 
     storeAlert(state, alert) {
-      state.alerts.push(alert);
+      const key = crypto.randomBytes(5).toString("hex");
+      state.alerts.push({ ...alert, key: key });
       setTimeout(() => {
-        state.alerts.pop();
-      }, 1500);
+        const index = state.alerts.findIndex((x) => x.key === key);
+        if (index >= 0) {
+          state.alerts.splice(index, 1);
+        }
+      }, 2000);
     },
 
     storeError(state, error) {

@@ -75,7 +75,7 @@ export default {
     },
 
     icon() {
-      return this.isFavorite ? "mdi-heart" : "mdi-heart-outline";
+      return this.isFavorite ? "mdi-bookmark-check" : "mdi-bookmark-outline";
     },
 
     isFavorite() {

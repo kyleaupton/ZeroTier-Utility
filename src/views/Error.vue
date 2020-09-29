@@ -2,7 +2,7 @@
   <div class="error-container">
     <v-icon :color="iconColor" x-large>mdi-alert-circle</v-icon>
     <div>
-      <p>Uh Oh! Looks like there's an error with ZeroTier's API:</p>
+      <p>Looks like there's an error with ZeroTier's API:</p>
       <div>
         <div class="error-status">
           Status:

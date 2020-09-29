@@ -29,7 +29,7 @@ export default {
   methods: {
     handleClick() {
       clipboard.writeText(this.ip);
-      this.$store.dispatch("addAlert", "Copied to clipboard");
+      this.$store.dispatch("addAlert", { text: "Copied to clipboard" });
     },
   },
 

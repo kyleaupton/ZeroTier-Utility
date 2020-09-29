@@ -13,6 +13,7 @@ import {
   screen,
   // eslint-disable-next-line no-unused-vars
   Notification,
+  Menu,
 } from "electron";
 import { autoUpdater } from "electron-updater";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
@@ -31,6 +32,8 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 if (process.platform === "darwin") {
   app.dock.hide();
 }
+
+app.setName("ZeroTier Utility");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -92,6 +95,10 @@ function hideWindow() {
   win.hide();
 }
 
+function toggleWindow() {
+  win.isVisible() ? hideWindow() : showWindow();
+}
+
 function createWindow() {
   // Create main window
   win = new BrowserWindow({
@@ -139,8 +146,28 @@ function createTray() {
     : "zerotier-utility-icon-dark@2x.png";
   const filePath = path.join(__static, iconName);
   tray = new Tray(filePath);
+  tray.setToolTip("ZeroTier Utility");
+
+  /**
+   *  EVENTS
+   */
   tray.on("click", () => {
-    showWindow();
+    toggleWindow();
+  });
+
+  tray.on("right-click", () => {
+    const contextMenu = Menu.buildFromTemplate([
+      { role: "about" },
+      {
+        label: "Check for updates",
+        click: () => {
+          checkForUpdates();
+        },
+      },
+      { type: "separator" },
+      { role: "quit" },
+    ]);
+    tray.popUpContextMenu(contextMenu);
   });
 }
 
@@ -200,7 +227,9 @@ ipcMain.on("get-user-data-path", (event) => {
   event.returnValue = app.getPath("userData");
 });
 
-// Dark mode
+/**
+ *  DARK MODE
+ */
 function updateDarkMode() {
   if (win) {
     win.send("dark-mode", nativeTheme.shouldUseDarkColors);
@@ -215,14 +244,33 @@ nativeTheme.on("updated", () => {
 ipcMain.on("get-dark-mode", () => {
   updateDarkMode();
 });
+///////////////////////////////////////////////////////////
 
-// Update
+/**
+ *  UPDATE
+ */
 autoUpdater.on("update-downloaded", () => {
-  // Not tested
   win.send("update-available", true);
 });
 
 ipcMain.on("apply-update", () => {
-  // Works, tested
   autoUpdater.quitAndInstall();
 });
+
+autoUpdater.on("update-available", () => {
+  win.send("update-is-available");
+});
+
+autoUpdater.on("update-not-available", () => {
+  win.send("update-not-available");
+});
+
+function checkForUpdates() {
+  win.send("update-checking");
+  autoUpdater.checkForUpdates();
+}
+
+setInterval(() => {
+  autoUpdater.checkForUpdates();
+}, 1000 * 60 * 60 * 12); // Check for an update every 12 hours
+///////////////////////////////////////////////////////////

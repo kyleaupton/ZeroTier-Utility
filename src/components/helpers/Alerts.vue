@@ -1,7 +1,9 @@
 <template>
   <div class="alert-container">
     <div v-for="(alert, i) in alerts" :key="i">
-      <v-alert class="alert" type="success" dense>{{ alert }}</v-alert>
+      <v-alert class="alert" :type="alert.type || 'success'" dense>{{
+        alert.text
+      }}</v-alert>
     </div>
   </div>
 </template>

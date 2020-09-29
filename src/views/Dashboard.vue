@@ -3,13 +3,13 @@
     <div v-if="!error">
       <div v-if="loaded">
         <div class="dashboard-content-container">
-          <div class="dashboard-title">My networks</div>
+          <div class="dashboard-title">My Networks</div>
           <div class="dashboard-network-container">
             <div v-for="network in networks" :key="network.id">
               <DashboardNetwork class="dashboard-network" :item="network" />
             </div>
           </div>
-          <div class="dashboard-title">Favorites</div>
+          <div class="dashboard-title">Bookmarks</div>
           <div class="dashboard-favorites-container">
             <draggable
               v-model="favorites"
@@ -114,7 +114,6 @@ export default {
 <style>
 .dashboard-container {
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -126,17 +125,17 @@ export default {
 
 .dashboard-title {
   text-align: left;
-  margin: 8px 0 8px 8px;
+  margin: 0 0 8px 0;
 }
 
 .dashboard-network-container {
   overflow-y: scroll;
+  margin: 0 0 8px 0;
 }
 
 .dashboard-favorites-container {
   display: flex;
   flex-direction: column;
-  margin: 0 8px 0 8px;
 }
 
 .dashboard-network {

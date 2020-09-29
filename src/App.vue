@@ -2,7 +2,7 @@
   <div id="app">
     <v-app>
       <Header v-if="!showInit" />
-      <v-main>
+      <v-main class="app-main">
         <Update v-if="updateAvail" />
         <component :is="component" />
       </v-main>
@@ -31,25 +31,48 @@ export default {
   },
 
   created() {
+    // Show init page
     this.$store.commit(
       "storeShowInit",
       !this.$store.state.currentAuthToken.length
     );
+
+    // Get current authtoken
     this.$store.dispatch("getCurrentAuthToken"); // This is the entry point for bootstraping.
+
+    // Get dark mode
     ipcRenderer.send("get-dark-mode");
     ipcRenderer.on("dark-mode", (event, arg) => {
       this.$store.commit("storeDarkMode", arg);
       this.$vuetify.theme.dark = arg;
     });
+
     // Setting the interval for refreshing
     setInterval(() => {
-      console.log("got to interval");
       this.$store.dispatch("refresh");
     }, 120000);
 
-    // Updating
+    // Updates
     ipcRenderer.on("update-available", (event, arg) => {
       this.$store.commit("storeUpdateAvail", arg);
+    });
+    ipcRenderer.on("update-not-available", () => {
+      this.$store.dispatch("addAlert", {
+        text: "No updates available.",
+        type: "info",
+      });
+    });
+    ipcRenderer.on("update-is-available", () => {
+      this.$store.dispatch("addAlert", {
+        text: "Downloading update...",
+        type: "info",
+      });
+    });
+    ipcRenderer.on("update-checking", () => {
+      this.$store.dispatch("addAlert", {
+        text: "Checking for updates...",
+        type: "info",
+      });
     });
   },
 
@@ -91,5 +114,9 @@ export default {
 <style>
 ::-webkit-scrollbar {
   width: 0px;
+}
+
+.app-main {
+  margin: 8px;
 }
 </style>

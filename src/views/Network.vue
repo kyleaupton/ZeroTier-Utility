@@ -76,7 +76,6 @@ export default {
 .network-container {
   display: flex;
   flex-direction: column;
-  margin: 8px;
 }
 
 .network-item {
