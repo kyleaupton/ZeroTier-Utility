@@ -43,6 +43,11 @@ p {
   text-align: left;
 }
 
+.dashboard-network-card-name {
+  font-size: 16px;
+  font-size: 3.5vw;
+}
+
 .dashboard-network-card-id {
   font-size: 12px;
   font-weight: 300;

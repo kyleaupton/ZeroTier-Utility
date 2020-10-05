@@ -5,9 +5,12 @@
         <div class="dashboard-content-container">
           <div class="dashboard-title">My Networks</div>
           <div class="dashboard-network-container">
-            <div v-for="network in networks" :key="network.id">
-              <DashboardNetwork class="dashboard-network" :item="network" />
-            </div>
+            <DashboardNetwork
+              v-for="network in networks"
+              :key="network.id"
+              class="dashboard-network"
+              :item="network"
+            />
           </div>
           <div class="dashboard-title">Bookmarks</div>
           <div class="dashboard-favorites-container">
@@ -67,7 +70,18 @@ export default {
     },
 
     networks() {
-      return this.$store.state.allNetworks.items;
+      if (process.env.NODE_ENV === "development") {
+        const payload = [];
+        const growFactor = 1;
+        this.$store.state.allNetworks.items.forEach((network) => {
+          for (let i = 0; i < growFactor; i++) {
+            payload.push(network);
+          }
+        });
+        return payload;
+      } else {
+        return this.$store.state.allNetworks.items;
+      }
     },
 
     loaded() {
@@ -129,18 +143,24 @@ export default {
 }
 
 .dashboard-network-container {
-  overflow-y: scroll;
+  overflow: scroll;
+  display: flex;
+  flex-direction: column;
+  max-height: 180px;
+}
+
+.dashboard-network {
+  width: 100%;
+  flex: 0 0 45%;
+}
+
+.dashboard-network:not(:last-child) {
   margin: 0 0 8px 0;
 }
 
 .dashboard-favorites-container {
   display: flex;
   flex-direction: column;
-}
-
-.dashboard-network {
-  margin: 0 0 0 8px;
-  float: left;
 }
 
 .dashboard-favorites-item {

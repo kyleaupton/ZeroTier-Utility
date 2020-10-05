@@ -33,4 +33,9 @@ export default {
   justify-content: flex-end;
   align-items: center;
 }
+
+.alert {
+  position: relative;
+  width: 100%;
+}
 </style>
