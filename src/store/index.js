@@ -15,6 +15,7 @@ export default new Vuex.Store({
         statusText: "",
       },
       updateAvailable: false,
+      dashboardNetworksView: "my-networks",
     },
     currentAuthToken: "",
     allAuthTokens: [],
@@ -89,6 +90,10 @@ export default new Vuex.Store({
     storeUpdateAvail(state, value) {
       state.meta.updateAvailable = value;
     },
+
+    storeDashboardNetworksView(state, value) {
+      state.meta.dashboardNetworksView = value;
+    },
   },
 
   actions: {
@@ -98,6 +103,7 @@ export default new Vuex.Store({
       context.dispatch("getAllAuthTokens");
       context.dispatch("getFavorites");
       context.dispatch("getNetworks");
+      context.dispatch("getDashboardNetworksView");
     },
 
     getNetworks(context) {
@@ -105,6 +111,7 @@ export default new Vuex.Store({
       ipcRenderer.once("bootstrap-resopnse", (event, arg) => {
         console.log("got to bootstrap response");
         context.commit("storeNetworks", arg);
+        console.log(arg);
         const now = new Date();
         context.dispatch("setLastRefreshed", now.getTime());
         context.dispatch("getLastRefreshed");
@@ -184,6 +191,18 @@ export default new Vuex.Store({
 
     refresh(context) {
       context.dispatch("getNetworks");
+    },
+
+    getDashboardNetworksView(context) {
+      context.commit(
+        "storeDashboardNetworksView",
+        ipcRenderer.sendSync("get-dashboard-networks-view")
+      );
+    },
+
+    setDashboardNetworksView(context, arg) {
+      ipcRenderer.sendSync("set-dashboard-networks-view", arg);
+      context.dispatch("getDashboardNetworksView");
     },
   },
 });

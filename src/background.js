@@ -19,7 +19,7 @@ import { autoUpdater } from "electron-updater";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import Positioner from "electron-positioner";
-import { API, getLocalAuthToken } from "./api/zt";
+import { API } from "./api/zt";
 
 autoUpdater.logger = require("electron-log");
 autoUpdater.logger.transports.file.level = "info";
@@ -27,6 +27,13 @@ app.setAppUserModelId("com.electron.zerotier-utility");
 app.setAsDefaultProtocolClient("zerotier-utility");
 
 const isDevelopment = process.env.NODE_ENV !== "production";
+
+////////////////////////
+const size = {
+  x: 500,
+  y: 805,
+};
+////////////////////////
 
 // Hide dock on mac
 if (process.platform === "darwin") {
@@ -80,8 +87,8 @@ function showWindow() {
 
     const positioner = new Positioner(win);
 
-    win.setMinimumSize(400, 600);
-    win.setSize(400, 600);
+    win.setMinimumSize(size.x, size.y);
+    win.setSize(size.x, size.y);
     win.setResizable(false);
     win.setMovable(false);
     positioner.move(position, trayBounds);
@@ -102,8 +109,8 @@ function toggleWindow() {
 function createWindow() {
   // Create main window
   win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: size.x,
+    height: size.y,
     show: false,
     fullscreenable: false,
     frame: false,
@@ -201,7 +208,6 @@ app.on("ready", async () => {
       console.error("Vue Devtools failed to install:", e.toString());
     }
   }
-  await getLocalAuthToken();
   API();
   createTray();
   createWindow();

@@ -1,29 +1,30 @@
 <template>
-  <div class="ip" :style="ipStyling" @click="handleClick">{{ ip }}</div>
+  <div>
+    <div
+      id="ip-address"
+      class="ip"
+      :class="{ notActualPeer: !isActualPeer }"
+      @click="handleClick"
+    >
+      {{ ip }}
+    </div>
+  </div>
 </template>
 
 <script>
 const { clipboard } = window.require("electron");
+import tippy from "tippy.js";
 
 export default {
   name: "Ip",
 
-  computed: {
-    darkMode() {
-      return this.$store.state.meta.darkMode;
-    },
-
-    ipStyling() {
-      return {
-        "--border-color": this.darkMode ? "white" : "black",
-        "--background-color-hover": this.darkMode
-          ? "rgba(255, 255, 255, 0.1)"
-          : "rgba(0, 0, 0, 0.1)",
-        "--background-color-active": this.darkMode
-          ? "rgba(255, 255, 255, 0.5)"
-          : "rgba(0, 0, 0, 0.5)",
-      };
-    },
+  mounted() {
+    if (!this.isActualPeer) {
+      tippy("#ip-address", {
+        content: "You have no access to this peer.",
+        theme: "custom",
+      });
+    }
   },
 
   methods: {
@@ -33,7 +34,7 @@ export default {
     },
   },
 
-  props: ["ip"],
+  props: ["ip", "isActualPeer"],
 };
 </script>
 
@@ -45,12 +46,16 @@ export default {
 }
 
 .ip:hover {
-  border: 1px solid var(--border-color);
-  background: var(--background-color-hover);
+  border: 1px solid var(--color-border);
+  background: var(--color-background-hover);
 }
 
 .ip:active {
-  border: 1px solid var(--border-color);
-  background: var(--background-color-active);
+  border: 1px solid var(--color-border);
+  background: var(--color-background-active);
+}
+
+.notActualPeer {
+  background: var(--color-background-peer-notPeer);
 }
 </style>

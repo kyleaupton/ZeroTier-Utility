@@ -17,7 +17,7 @@
         <div class="peer-content-item-container">
           <div class="peer-content-item">
             <div v-for="ip in item.config.ipAssignments" :key="ip">
-              <IpAddress :ip="ip" />
+              <IpAddress :ip="ip" :isActualPeer="item.isActualPeer" />
             </div>
           </div>
           <div>

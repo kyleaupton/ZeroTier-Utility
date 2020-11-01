@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{ darkMode: darkMode }">
     <v-app>
       <Header v-if="!showInit" />
       <v-main class="app-main">
@@ -18,6 +18,7 @@ import Alerts from "./components/helpers/Alerts";
 import NewAuthtoken from "./views/NewAuthtoken";
 import Update from "./components/helpers/Update";
 const { ipcRenderer } = window.require("electron");
+import "tippy.js/dist/tippy.css";
 
 export default {
   name: "App",
@@ -77,6 +78,10 @@ export default {
   },
 
   computed: {
+    darkMode() {
+      return this.$store.state.meta.darkMode;
+    },
+
     component() {
       return this.$store.state.showInit ? "NewAuthtoken" : "router-view";
     },
@@ -112,11 +117,40 @@ export default {
 </script>
 
 <style>
+#app {
+  font-family: sans-serif;
+}
+
+:root {
+  /* background colors */
+  --color-dark: black;
+  --color-background-hover: rgba(0, 0, 0, 0.1);
+  --color-background-active: rgba(0, 0, 0, 0.5);
+  --color-background-peer-notPeer: rgba(191, 63, 63, 0.3);
+
+  /* border colors */
+  --color-border: black;
+}
+
+.darkMode {
+  /* background colors */
+  --color-dark: white;
+  --color-background-hover: rgba(255, 255, 255, 0.1);
+  --color-background-active: rgba(255, 255, 255, 0.5);
+
+  /* border colors*/
+  --color-border: white;
+}
+
 ::-webkit-scrollbar {
   width: 0px;
 }
 
 .app-main {
   margin: 8px;
+}
+
+.tippy-box[data-theme~="custom"] {
+  font-family: sans-serif;
 }
 </style>

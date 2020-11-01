@@ -1,80 +1,89 @@
-import { app, ipcMain } from "electron";
+import { ipcMain } from "electron";
+
 import axios from "axios";
-import os from "os";
-import path from "path";
-import sudo from "sudo-prompt";
+
+import util from "util";
+const exec = util.promisify(require("child_process").exec);
+
 import db from "../db/index";
 
-let localAuthtoken;
+async function sendRequest(param) {
+  const url = "https://my.zerotier.com/api";
+  const authtoken = db
+    .get("auth")
+    .get("currentAuthToken")
+    .value();
+  const response = await axios({
+    method: param.method || "GET",
+    url: `${url}${param.url}`,
+    headers: {
+      Authorization: `bearer ${authtoken}`,
+    },
+  });
+  return response.data;
+}
+
+async function Bootstrap() {
+  // 1) Get client id of local zt instance, this also checks if zt is installed
+  // 2) Set that client id in the database
+  // 3) Get all networks and clients in the networks
+  // 4) Determine which networks the current client is apart of
+  // 5) $$ profit $$
+
+  const { stdout } = await exec("zerotier-cli status");
+
+  // TODO: Handle if zt is not installed
+
+  const regex = /\s.{10}\s/g;
+  const nodeIdObject = regex.exec(stdout);
+  const nodeId = nodeIdObject[0].trim();
+
+  const allNetworks = await sendRequest({
+    method: "GET",
+    url: "/network",
+  });
+
+  let payload = [];
+
+  await Promise.all(
+    allNetworks.map(async (network) => {
+      const peers = await sendRequest({
+        url: `/network/${network.id}/member`,
+        method: "GET",
+      });
+      let isSubscribed = false;
+      peers.forEach((peer) => {
+        if (peer.nodeId === nodeId) {
+          isSubscribed = true;
+        }
+      });
+      peers.forEach((peer) => {
+        peer.isActualPeer = isSubscribed;
+      });
+      payload.push({
+        ...network,
+        peers,
+        isSubscribed,
+      });
+    })
+  );
+
+  // Alphabetize payload
+  payload.sort((a, b) => {
+    const aName = a.config.name.toLowerCase();
+    const bName = b.config.name.toLowerCase();
+    if (aName < bName) return -1;
+    if (aName > bName) return 1;
+    else return 0;
+  });
+  return payload;
+}
 
 export function API() {
   return new Promise((resolve) => {
-    const url = "https://my.zerotier.com/api";
-    async function sendRequest(param) {
-      const response = await axios({
-        method: param.method || "GET",
-        url: `${url}${param.url}`,
-        headers: {
-          Authorization: `bearer ${param.authtoken}`,
-        },
-      });
-      return response.data;
-    }
-
-    const localPort = "9993";
-    async function sendRequestLocal(param) {
-      const response = await axios({
-        method: param.method || "GET",
-        url: `http://localhost:${localPort}${param.url}`,
-        headers: {
-          "X-ZT1-Auth": `${localAuthtoken}`,
-        },
-      });
-      return response.data;
-    }
-
     ipcMain.on("bootstrap", async (event) => {
       try {
-        // First get list of all the subscribed networks form the local json zt api.
-        const subscribedNetworks = await sendRequestLocal({
-          url: "/network",
-          method: "GET",
-        });
-
-        // Then get current authtoken
-        const authtoken = db
-          .get("auth")
-          .get("currentAuthToken")
-          .value();
-
-        // Get all the network for current authtoken
-        const networks = await sendRequest({
-          method: "GET",
-          url: "/network",
-          authtoken,
-        });
-
-        // Now that we have the networks, simply transverse them and map
-        // subscribed networks with networks
-        let payload = [];
-        await Promise.all(
-          networks.map(async (network) => {
-            const find = subscribedNetworks.find((x) => x.id === network.id);
-            if (find) {
-              // Now lets find all of the peers on this network
-              const response = await sendRequest({
-                method: "GET",
-                url: `/network/${network.id}/member`,
-                authtoken,
-              });
-              payload.push({
-                ...network,
-                peers: response,
-              });
-            }
-          })
-        );
-
+        const payload = await Bootstrap();
         event.reply("bootstrap-resopnse", payload);
       } catch (error) {
         event.reply("bootstrap-response-error", {
@@ -225,53 +234,23 @@ export function API() {
       }
     });
 
-    return resolve();
-  });
-}
-
-export function getLocalAuthToken() {
-  return new Promise((resolve) => {
-    let workingDirectory;
-    switch (os.platform()) {
-      case "darwin":
-        workingDirectory = path.join(
-          "/Library",
-          "Application\\ Support",
-          "ZeroTier",
-          "One"
-        );
-        break;
-
-      case "win32":
-        workingDirectory = path.join("\\ProgramData", "ZeroTier", "One");
-        break;
-
-      case "linux":
-        workingDirectory = path.join("/var", "lib", "zerotier-one");
-        break;
-
-      case "freebsd":
-      case "openbsd":
-        workingDirectory = path.join("/var", "db", "zerotier-one");
-    }
-
-    const command =
-      os.platform() === "win32"
-        ? `type ${workingDirectory}\\authtoken.secret`
-        : `cat ${workingDirectory}/authtoken.secret`;
-
-    sudo.exec(
-      command,
-      {
-        name: "ZeroTier Utility",
-      },
-      (error, stdout) => {
-        if (error) {
-          app.exit();
-        }
-        localAuthtoken = stdout;
-        return resolve();
+    ipcMain.on("get-dashboard-networks-view", (event) => {
+      try {
+        event.returnValue = db.get("dashboardNetworksView").value();
+      } catch (error) {
+        event.returnValue = error;
       }
-    );
+    });
+
+    ipcMain.on("set-dashboard-networks-view", (event, arg) => {
+      try {
+        db.set("dashboardNetworksView", arg).write();
+        event.returnValue = "Ok";
+      } catch (error) {
+        event.returnValue = error;
+      }
+    });
+
+    return resolve();
   });
 }

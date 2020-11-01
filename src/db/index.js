@@ -18,6 +18,7 @@ db.defaults({
     lastRefreshed: "",
   },
   favorites: [],
+  dashboardNetworksView: "my-networks",
 }).write();
 
 export default db;

@@ -3,33 +3,53 @@
     <div v-if="!error">
       <div v-if="loaded">
         <div class="dashboard-content-container">
-          <div class="dashboard-title">My Networks</div>
-          <div class="dashboard-network-container">
-            <DashboardNetwork
-              v-for="network in networks"
-              :key="network.id"
-              class="dashboard-network"
-              :item="network"
+          <DashboardNetworkSelector class="dashboard-title" />
+          <div class="dashboard-content-section">
+            <v-text-field
+              class="dashboard-content-search"
+              v-model="networkFilter"
+              label="Search for a network"
+              :hide-details="true"
+              solo
+              dense
             />
+            <div class="dashboard-network-container">
+              <DashboardNetwork
+                v-for="network in networksFiltered"
+                :key="network.id"
+                class="dashboard-network"
+                :item="network"
+              />
+            </div>
           </div>
-          <div class="dashboard-title">Bookmarks</div>
-          <div class="dashboard-favorites-container">
-            <draggable
-              v-model="favorites"
-              tag="div"
-              ghost-class="ghost"
-              handle=".peer-handle"
-            >
-              <transition-group>
-                <div
-                  class="dashboard-favorites-item"
-                  v-for="fav in favorites"
-                  :key="fav.id"
-                >
-                  <Peer :item="fav" />
-                </div>
-              </transition-group>
-            </draggable>
+          <div class="dashboard-title dashboard-title-bookmarks">Bookmarks</div>
+          <div class="dashboard-content-section">
+            <v-text-field
+              class="dashboard-content-search"
+              v-model="bookmarkFilter"
+              label="Search for a peer"
+              :hide-details="true"
+              solo
+              dense
+            />
+            <div class="dashboard-favorites-container">
+              <draggable
+                v-model="favorites"
+                tag="div"
+                ghost-class="ghost"
+                handle=".peer-handle"
+              >
+                <transition-group>
+                  <div
+                    class="dashboard-favorites-item"
+                    v-for="fav in favorites"
+                    :key="fav.id"
+                  >
+                    <Peer :item="fav" />
+                  </div>
+                </transition-group>
+              </draggable>
+            </div>
           </div>
         </div>
       </div>
@@ -45,6 +65,7 @@
 
 <script>
 import DashboardNetwork from "../components/dashboard/Dashboard-Network";
+import DashboardNetworkSelector from "../components/dashboard/Dashboard-Network-Selector";
 import Peer from "../components/network/Peer";
 import Loading from "../components/helpers/Loading";
 import Error from "./Error";
@@ -56,13 +77,25 @@ export default {
 
   components: {
     DashboardNetwork,
+    DashboardNetworkSelector,
     Peer,
     Loading,
     draggable,
     Error,
   },
 
-  created() {},
+  data() {
+    return {
+      networkFilter: "",
+      bookmarkFilter: "",
+    };
+  },
+
+  watch: {
+    networkFilter() {
+      console.log(this.filter);
+    },
+  },
 
   computed: {
     error() {
@@ -70,18 +103,28 @@ export default {
     },
 
     networks() {
-      if (process.env.NODE_ENV === "development") {
-        const payload = [];
-        const growFactor = 1;
-        this.$store.state.allNetworks.items.forEach((network) => {
-          for (let i = 0; i < growFactor; i++) {
+      const networkView = this.$store.state.meta.dashboardNetworksView;
+      const allNetworks = this.$store.state.allNetworks.items;
+      if (networkView === "all-networks") {
+        return allNetworks;
+      } else {
+        let payload = [];
+        allNetworks.forEach((network) => {
+          if (network.isSubscribed === true) {
             payload.push(network);
           }
         });
         return payload;
-      } else {
-        return this.$store.state.allNetworks.items;
       }
+    },
+
+    networksFiltered() {
+      return this.networks.filter((network) => {
+        const filter = this.networkFilter.toLowerCase();
+        if (network.config.name.toLowerCase().includes(filter)) {
+          return true;
+        }
+      });
     },
 
     loaded() {
@@ -108,7 +151,15 @@ export default {
               }
             }
           });
-          return payload;
+
+          return payload.filter((item) => {
+            const filter = this.bookmarkFilter.toLowerCase();
+            if (
+              item.name.toLowerCase().includes(filter) ||
+              item.description.toLowerCase().includes(filter)
+            )
+              return true;
+          });
         } else {
           return [];
         }
@@ -120,6 +171,12 @@ export default {
         });
         this.$store.dispatch("reOrderFavorites", payload);
       },
+    },
+  },
+
+  methods: {
+    handletest() {
+      console.log(this.networkFilter);
     },
   },
 };
@@ -139,14 +196,29 @@ export default {
 
 .dashboard-title {
   text-align: left;
-  margin: 0 0 8px 0;
+}
+
+.dashboard-title-bookmarks {
+  padding: 1px;
 }
 
 .dashboard-network-container {
   overflow: scroll;
   display: flex;
   flex-direction: column;
-  max-height: 180px;
+  max-height: 280px;
+  margin-bottom: -14px;
+}
+
+.dashboard-content-section {
+  padding: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.dashboard-content-search {
+  margin-bottom: 8px !important;
 }
 
 .dashboard-network {
@@ -161,6 +233,9 @@ export default {
 .dashboard-favorites-container {
   display: flex;
   flex-direction: column;
+  max-height: 280px;
+  overflow: scroll;
+  margin-bottom: -14px;
 }
 
 .dashboard-favorites-item {
