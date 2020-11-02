@@ -14,7 +14,7 @@ export default new Vuex.Store({
         status: "",
         statusText: "",
       },
-      updateAvailable: true,
+      updateAvailable: false,
       dashboardNetworksView: "my-networks",
     },
     currentAuthToken: "",

@@ -1,39 +1,32 @@
 <template>
-  <div>
-    <div v-if="loaded" class="network-container">
-      <div>{{ network.config.name }}</div>
-      <div class="network-item">
-        <v-text-field
-          v-model="filter"
-          label="Search for a peer"
-          :hide-details="true"
-          outlined
-          single-line
-          dense
-        />
-      </div>
-      <div>
-        <div v-for="peer in items" :key="peer.nodeId" class="network-item">
-          <Peer :item="peer" />
-        </div>
-      </div>
+  <div class="network-container">
+    <div>{{ network.config.name }}</div>
+    <div class="network-item">
+      <v-text-field
+        v-model="filter"
+        label="Search for a peer"
+        :hide-details="true"
+        outlined
+        single-line
+        dense
+      />
     </div>
-    <div v-else>
-      <Loading />
+    <div>
+      <div v-for="peer in items" :key="peer.nodeId" class="network-item">
+        <Peer :item="peer" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import Peer from "../components/network/Peer";
-import Loading from "../components/helpers/Loading";
 
 export default {
   name: "Network",
 
   components: {
     Peer,
-    Loading,
   },
 
   data() {
@@ -41,8 +34,6 @@ export default {
       filter: "",
     };
   },
-
-  created() {},
 
   computed: {
     network() {
