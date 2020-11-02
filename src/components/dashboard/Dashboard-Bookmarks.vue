@@ -3,7 +3,7 @@
     <v-text-field
       class="dashboard-content-search"
       v-model="filter"
-      label="Search for a peer"
+      label="Search for a bookmarked peer"
       :hide-details="true"
       solo
       dense
