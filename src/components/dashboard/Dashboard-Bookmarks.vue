@@ -5,7 +5,8 @@
       v-model="filter"
       label="Search for a bookmarked peer"
       :hide-details="true"
-      solo
+      outlined
+      single-line
       dense
     />
     <div>
@@ -49,13 +50,13 @@ export default {
   },
 
   computed: {
-    loaded() {
-      return this.$store.state.allNetworks.loaded;
+    allNetworks() {
+      return this.$store.state.allNetworks.items;
     },
 
     favorites: {
       get() {
-        if (this.loaded) {
+        if (this.allNetworks.length) {
           let payload = [];
           const baseFavs = this.$store.state.favorites;
           const networks = this.$store.state.allNetworks.items;

@@ -7,7 +7,8 @@
           v-model="filter"
           label="Search for a peer"
           :hide-details="true"
-          solo
+          outlined
+          single-line
           dense
         />
       </div>

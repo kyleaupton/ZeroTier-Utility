@@ -3,7 +3,6 @@
     <v-app>
       <Header v-if="!showInit" />
       <v-main class="app-main">
-        <Update v-if="updateAvail" />
         <component :is="component" />
       </v-main>
       <Alerts />
@@ -50,8 +49,13 @@ export default {
 
     // Setting the interval for refreshing
     setInterval(() => {
-      this.$store.dispatch("refresh");
-    }, 120000);
+      this.$store.dispatch("getLastRefreshed");
+      const now = new Date();
+      const time = now.getTime();
+      if (time > this.$store.state.lastRefreshed + 120000) {
+        this.$store.dispatch("refresh");
+      }
+    }, 5000);
 
     // Updates
     ipcRenderer.on("update-available", (event, arg) => {

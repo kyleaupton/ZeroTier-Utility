@@ -1,13 +1,11 @@
 <template>
   <div v-if="!error" class="dashboard-container">
-    <div v-if="loaded" class="dashboard-content-container">
+    <div class="dashboard-content-container">
+      <Update class="dashboard-upate" />
       <DashboardNetworkSelector class="dashboard-title" />
       <DashboardNetworks class="dashboard-networks" />
       <div class="dashboard-title dashboard-title-bookmarks">Bookmarks</div>
       <DashboardBookmarks class="dashboard-bookmarks" />
-    </div>
-    <div v-else>
-      <Loading />
     </div>
   </div>
   <div v-else class="dashboard-error">
@@ -19,8 +17,8 @@
 import DashboardNetworks from "../components/dashboard/Dashboard-Networks";
 import DashboardBookmarks from "../components/dashboard/Dashboard-Bookmarks";
 import DashboardNetworkSelector from "../components/dashboard/Dashboard-Network-Selector";
-import Loading from "../components/helpers/Loading";
 import Error from "./Error";
+import Update from "../components/helpers/Update";
 
 export default {
   name: "Dashboard",
@@ -29,8 +27,8 @@ export default {
     DashboardNetworks,
     DashboardBookmarks,
     DashboardNetworkSelector,
-    Loading,
     Error,
+    Update,
   },
 
   computed: {
@@ -80,5 +78,8 @@ export default {
 .dashboard-error {
   width: 100%;
   height: 100%;
+}
+
+.dashboard-upate {
 }
 </style>

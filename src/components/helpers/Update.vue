@@ -1,7 +1,12 @@
 <template>
-  <div class="update-container" :style="containerStyle">
+  <div v-if="updateAvail" class="update-container" :style="containerStyle">
     <div class="update-item">
-      <v-btn x-small @click="handleClick()">Apply Update</v-btn>
+      <p>
+        A new update is available!
+        <span class="update-link" @click="handleClick()"
+          >Click here to apply.</span
+        >
+      </p>
     </div>
   </div>
 </template>
@@ -13,6 +18,10 @@ export default {
   name: "Update",
 
   computed: {
+    updateAvail() {
+      return this.$store.state.meta.updateAvailable;
+    },
+
     containerStyle() {
       return { "--background-color": this.$vuetify.theme.themes.light.warning };
     },
@@ -39,17 +48,17 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 28px;
+  width: calc(100% + 16px);
+  margin: -8px -8px 4px -8px;
   background-color: var(--background-color);
 }
 
 .update-item {
-  margin: 0 8px;
+  margin: 4px;
 }
 
-.update-text {
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
+.update-link {
+  cursor: pointer;
+  text-decoration: underline;
 }
 </style>

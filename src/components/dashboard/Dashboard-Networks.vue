@@ -5,7 +5,8 @@
       v-model="filter"
       label="Search for a network"
       :hide-details="true"
-      solo
+      outlined
+      single-line
       dense
     />
     <div class="networks-network-container">

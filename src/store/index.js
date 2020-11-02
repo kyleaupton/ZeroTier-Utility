@@ -14,13 +14,13 @@ export default new Vuex.Store({
         status: "",
         statusText: "",
       },
-      updateAvailable: false,
+      updateAvailable: true,
       dashboardNetworksView: "my-networks",
     },
     currentAuthToken: "",
     allAuthTokens: [],
     allNetworks: {
-      items: null,
+      items: [],
       loaded: false,
     },
     lastRefreshed: "",
@@ -44,7 +44,7 @@ export default new Vuex.Store({
     },
 
     resetNetworks(state) {
-      state.allNetworks.items = [];
+      // state.allNetworks.items = [];
       state.allNetworks.loaded = false;
     },
 
@@ -109,9 +109,7 @@ export default new Vuex.Store({
     getNetworks(context) {
       context.commit("resetNetworks");
       ipcRenderer.once("bootstrap-resopnse", (event, arg) => {
-        console.log("got to bootstrap response");
         context.commit("storeNetworks", arg);
-        console.log(arg);
         const now = new Date();
         context.dispatch("setLastRefreshed", now.getTime());
         context.dispatch("getLastRefreshed");
@@ -119,7 +117,6 @@ export default new Vuex.Store({
       ipcRenderer.once("bootstrap-response-error", (event, arg) => {
         context.commit("storeError", arg);
       });
-      console.log("sending bootstrap request");
       ipcRenderer.send("bootstrap");
     },
 

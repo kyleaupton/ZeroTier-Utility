@@ -64,9 +64,19 @@
     <v-spacer />
 
     <p class="header-last-refreshed">{{ lastRefreshed }}</p>
-    <v-btn icon small @click="handleRefresh()">
-      <v-icon>mdi-refresh</v-icon>
-    </v-btn>
+    <div>
+      <v-btn v-if="!showSpinner" icon small @click="handleRefresh()">
+        <v-icon>mdi-refresh</v-icon>
+      </v-btn>
+      <v-progress-circular
+        class="header-spinner"
+        v-if="showSpinner"
+        size="24"
+        width="2"
+        color="warining"
+        indeterminate
+      />
+    </div>
   </v-app-bar>
 </template>
 
@@ -85,6 +95,12 @@ export default {
     };
   },
 
+  watch: {
+    lastRefreshedComputed() {
+      this.setLastRefreshed();
+    },
+  },
+
   mounted() {
     this.setLastRefreshed();
     setInterval(() => {
@@ -93,6 +109,10 @@ export default {
   },
 
   computed: {
+    lastRefreshedComputed() {
+      return this.$store.state.lastRefreshed;
+    },
+
     items() {
       let payload = [];
       const authtokens = this.$store.state.allAuthTokens;
@@ -108,6 +128,12 @@ export default {
 
     back() {
       return this.$route.meta.showBack;
+    },
+
+    showSpinner() {
+      return !this.$store.state.allNetworks.loaded;
+      // return true;
+      // return false;
     },
 
     darkMode() {
@@ -208,5 +234,9 @@ export default {
 .header-last-refreshed {
   font-size: 10px;
   font-weight: 300;
+}
+
+.header-spinner {
+  margin: 0 0 0 4px;
 }
 </style>
