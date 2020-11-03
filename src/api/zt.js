@@ -1,9 +1,9 @@
 import { ipcMain } from "electron";
-
 import axios from "axios";
 
-import util from "util";
-const exec = util.promisify(require("child_process").exec);
+import os from "os";
+import path from "path";
+import fs from "fs";
 
 import db from "../db/index";
 
@@ -25,23 +25,48 @@ async function sendRequest(param) {
 
 async function Bootstrap() {
   // 1) Get client id of local zt instance, this also checks if zt is installed
-  // 2) Set that client id in the database
-  // 3) Get all networks and clients in the networks
-  // 4) Determine which networks the current client is apart of
+  // 2) Get all networks and peers in those networks
+  // 3) Determine which networks the current client is apart of
+  // 4) Return to frontend
   // 5) $$ profit $$
 
-  const { stdout } = await exec("zerotier-cli status");
-  // const stdout = null;
+  let workingDirectory;
+  switch (os.platform()) {
+    case "darwin":
+      workingDirectory = path.join(
+        "/Library",
+        "Application Support",
+        "ZeroTier",
+        "One"
+      );
+      break;
 
-  if (!stdout) {
+    case "win32":
+      workingDirectory = path.join("\\ProgramData", "ZeroTier", "One");
+      break;
+
+    case "linux":
+      workingDirectory = path.join("/var", "lib", "zerotier-one");
+      break;
+
+    case "freebsd":
+    case "openbsd":
+      workingDirectory = path.join("/var", "db", "zerotier-one");
+  }
+
+  const filePath =
+    os.platform() === "win32"
+      ? `${workingDirectory}\\identity.public`
+      : `${workingDirectory}/identity.public`;
+
+  let file = fs.readFileSync(filePath, "utf-8");
+
+  if (!file) {
     throw Error("ZeroTier One is not installed.");
   }
 
-  // TODO: Handle if zt is not installed
-
-  const regex = /\s.{10}\s/g;
-  const nodeIdObject = regex.exec(stdout);
-  const nodeId = nodeIdObject[0].trim();
+  file = file.split(":");
+  const nodeId = file[0];
 
   const allNetworks = await sendRequest({
     method: "GET",
