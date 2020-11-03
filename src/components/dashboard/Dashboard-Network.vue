@@ -1,9 +1,9 @@
 <template>
-  <v-card
+  <Card
     class="dashboard-network-card"
-    outlined
-    ripple
-    @click="$router.push(`/network/${item.id}`)"
+    :hover="true"
+    :active="true"
+    @click="handleClick"
   >
     <div class="dashboard-network-card-container">
       <p class="dashboard-network-card-item dashboard-network-card-name">
@@ -13,12 +13,24 @@
         ID: {{ item.id }}
       </p>
     </div>
-  </v-card>
+  </Card>
 </template>
 
 <script>
+import Card from "../helpers/Card";
+
 export default {
   name: "Dashboard-Network",
+
+  components: {
+    Card,
+  },
+
+  methods: {
+    handleClick() {
+      this.$router.push(`/network/${this.item.id}`);
+    },
+  },
 
   props: ["item"],
 };
@@ -28,6 +40,7 @@ export default {
 p {
   margin-bottom: 0px !important;
 }
+
 .dashboard-network-card {
   cursor: pointer;
   display: inline-block;

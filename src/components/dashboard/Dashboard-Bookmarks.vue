@@ -1,13 +1,9 @@
 <template>
   <div>
-    <v-text-field
-      class="dashboard-content-search"
+    <Input
       v-model="filter"
-      label="Search for a bookmarked peer"
-      :hide-details="true"
-      outlined
-      single-line
-      dense
+      class="bookmarks-search"
+      label="Search for a bookedmarked peer"
     />
     <div>
       <draggable
@@ -32,6 +28,7 @@
 
 <script>
 import Peer from "../../components/network/Peer";
+import Input from "../helpers/Input";
 
 import draggable from "vuedraggable";
 
@@ -40,6 +37,7 @@ export default {
 
   components: {
     Peer,
+    Input,
     draggable,
   },
 
@@ -110,6 +108,10 @@ export default {
 }
 
 .dashboard-favorites-item {
+  margin: 0 0 8px 0;
+}
+
+.bookmarks-search {
   margin: 0 0 8px 0;
 }
 </style>

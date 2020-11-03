@@ -126,24 +126,51 @@ export default {
 }
 
 :root {
-  /* background colors */
+  /* colors */
+  --color-primary: #077bff;
+  --color-secondary: #f8f9fa;
+  --color-light: white;
   --color-dark: black;
+
+  /* background colors */
   --color-background-hover: rgba(0, 0, 0, 0.1);
   --color-background-active: rgba(0, 0, 0, 0.5);
   --color-background-peer-notPeer: rgba(191, 63, 63, 0.3);
 
   /* border colors */
   --color-border: black;
+  --color-border-primary: rgba(0, 0, 0, 0.3);
+  --color-border-primary-hover: rgba(0, 0, 0, 0.5);
+  --color-border-primary-active: rgba(0, 0, 0, 1);
+
+  /* input */
+  --color-caret-primary: black;
+  --color-text-primary: black;
+
+  /* animation */
+  --transition-primary: 0.2s;
 }
 
 .darkMode {
-  /* background colors */
+  /* colors */
+  --color-primary: #077bff;
+  --color-secondary: #292b2c;
+  --color-light: black;
   --color-dark: white;
+
+  /* background colors */
   --color-background-hover: rgba(255, 255, 255, 0.1);
   --color-background-active: rgba(255, 255, 255, 0.5);
 
   /* border colors*/
   --color-border: white;
+  --color-border-primary: rgba(255, 255, 255, 0.3);
+  --color-border-primary-hover: rgba(255, 255, 255, 0.55);
+  --color-border-primary-active: rgba(255, 255, 255, 1);
+
+  /* input */
+  --color-caret-primary: white;
+  --color-text-primary: white;
 }
 
 ::-webkit-scrollbar {

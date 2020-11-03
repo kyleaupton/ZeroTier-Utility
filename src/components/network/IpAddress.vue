@@ -43,6 +43,7 @@ export default {
   border: 1px solid transparent;
   border-radius: 4px;
   cursor: pointer;
+  transition: var(--transition-primary);
 }
 
 .ip:hover {

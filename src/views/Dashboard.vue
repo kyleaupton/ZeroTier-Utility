@@ -69,6 +69,7 @@ export default {
 
 .dashboard-title {
   text-align: left;
+  margin: 0 0 4px 0;
 }
 
 .dashboard-title-bookmarks {

@@ -1,13 +1,9 @@
 <template>
   <div>
-    <v-text-field
-      class="networks-search"
+    <Input
       v-model="filter"
+      class="networks-search"
       label="Search for a network"
-      :hide-details="true"
-      outlined
-      single-line
-      dense
     />
     <div class="networks-network-container">
       <DashboardNetwork
@@ -22,12 +18,14 @@
 
 <script>
 import DashboardNetwork from "./Dashboard-Network";
+import Input from "../helpers/Input";
 
 export default {
   name: "DashboardNetworks",
 
   components: {
     DashboardNetwork,
+    Input,
   },
 
   data() {

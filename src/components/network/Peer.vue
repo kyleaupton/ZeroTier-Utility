@@ -1,5 +1,5 @@
 <template>
-  <v-card class="peer-container" outlined>
+  <Card class="peer-container" :hover="true">
     <div class="peer-status" :style="statusColor" />
     <div class="peer-content-container">
       <div class="peer-content-item">
@@ -31,19 +31,21 @@
         </div>
       </div>
     </div>
-  </v-card>
+  </Card>
 </template>
 
 <script>
 import moment from "moment";
 
 import IpAddress from "./IpAddress";
+import Card from "../helpers/Card";
 
 export default {
   name: "Peer",
 
   components: {
     IpAddress,
+    Card,
   },
 
   data() {
@@ -120,6 +122,7 @@ export default {
   height: 100%;
   width: 8px;
   background-color: var(--color);
+  border-radius: 4px;
 }
 
 .peer-content-container {

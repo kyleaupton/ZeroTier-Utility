@@ -43,6 +43,7 @@ export default {
   cursor: pointer;
   display: inline-block;
   border: 1px solid transparent;
+  transition: var(--transition-primary);
 }
 
 .dashboard-network-selector-title:hover {
