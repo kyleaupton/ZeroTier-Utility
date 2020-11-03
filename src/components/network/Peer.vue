@@ -122,7 +122,7 @@ export default {
   height: 100%;
   width: 8px;
   background-color: var(--color);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .peer-content-container {
