@@ -11,8 +11,10 @@
         tag="div"
         ghost-class="ghost"
         handle=".peer-handle"
+        @start="drag = true"
+        @end="drag = false"
       >
-        <transition-group>
+        <transition-group name="flip-list">
           <div
             class="dashboard-favorites-item"
             v-for="fav in favorites"
@@ -41,9 +43,14 @@ export default {
     draggable,
   },
 
+  created() {
+    console.log(this.favorites);
+  },
+
   data() {
     return {
       filter: "",
+      drag: false,
     };
   },
 
@@ -113,5 +120,23 @@ export default {
 
 .bookmarks-search {
   margin: 0 0 8px 0;
+}
+
+.flip-list-move {
+  transition: transform 0.5s;
+}
+
+.flip-list-enter-active,
+.flip-list-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.flip-list-enter,
+.flip-list-leave-to {
+  opacity: 0;
+}
+
+.no-move {
+  transition: transform 0s;
 }
 </style>

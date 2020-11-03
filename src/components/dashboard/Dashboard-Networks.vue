@@ -6,12 +6,14 @@
       label="Search for a network"
     />
     <div class="networks-network-container">
-      <DashboardNetwork
-        class="networks-network"
-        v-for="network in networksFiltered"
-        :key="network.id"
-        :item="network"
-      />
+      <transition-group name="fade">
+        <DashboardNetwork
+          class="networks-network"
+          v-for="network in networksFiltered"
+          :key="network.id"
+          :item="network"
+        />
+      </transition-group>
     </div>
   </div>
 </template>

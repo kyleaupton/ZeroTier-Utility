@@ -184,4 +184,14 @@ export default {
 .tippy-box[data-theme~="custom"] {
   font-family: sans-serif;
 }
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>

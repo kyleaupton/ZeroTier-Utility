@@ -2,10 +2,14 @@
   <div v-if="!error" class="dashboard-container">
     <div class="dashboard-content-container">
       <Update class="dashboard-upate" />
-      <DashboardNetworkSelector class="dashboard-title" />
+      <transition name="tansition">
+        <DashboardNetworkSelector class="dashboard-title" />
+      </transition>
       <DashboardNetworks class="dashboard-networks" />
       <div class="dashboard-title dashboard-title-bookmarks">Bookmarks</div>
-      <DashboardBookmarks class="dashboard-bookmarks" />
+      <transition name="tansition">
+        <DashboardBookmarks class="dashboard-bookmarks" />
+      </transition>
     </div>
   </div>
   <div v-else class="dashboard-error">
@@ -56,6 +60,7 @@ export default {
   width: 100%;
   display: flex;
   flex-direction: column;
+  transition: var(--transition-primary);
 }
 
 .dashboard-networks {
