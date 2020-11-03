@@ -2,16 +2,16 @@
   <div class="error-container">
     <v-icon :color="iconColor" x-large>mdi-alert-circle</v-icon>
     <div>
-      <p>Looks like there's an error with ZeroTier's API:</p>
+      <p class="error-text">Looks like something went wrong!</p>
       <div>
-        <div class="error-status">
+        <div v-if="status" class="error-status">
           Status:
           <div class="error-status-meta">{{ status }}</div>
         </div>
       </div>
       <div>
         <div class="error-status">
-          Status text:
+          Error:
           <div class="error-status-meta">{{ statusText }}</div>
         </div>
       </div>
@@ -60,9 +60,12 @@ export default {
   word-break: normal;
 }
 
+.error-text {
+  text-align: center;
+}
+
 .error-status {
   display: inline-block;
-  margin: 0 0 0 36px;
 }
 
 .error-status-meta {

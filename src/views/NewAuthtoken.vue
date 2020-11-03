@@ -2,24 +2,10 @@
   <div class="authtoken-container">
     <div class="authtoken-item">Add ZeroTier API Authtoken</div>
     <div class="authtoken-item authtoken-search-container">
-      <v-text-field
-        class="authtoken-search"
-        v-model="authtoken"
-        label="Authtoken"
-        :hide-details="true"
-        solo
-        dense
-      />
+      <Input v-model="authtoken" label="Authtoken" />
     </div>
     <div class="authtoken-item authtoken-search-container">
-      <v-text-field
-        class="authtoken-search"
-        v-model="nickname"
-        label="Authtoken's nickname"
-        :hide-details="true"
-        solo
-        dense
-      />
+      <Input v-model="nickname" label="Authtoken's nickname" />
     </div>
     <div class="authtoken-action-container">
       <v-btn class="authtoken-action-btn" outlined @click="handleClick"
@@ -30,8 +16,14 @@
 </template>
 
 <script>
+import Input from "../components/helpers/Input";
+
 export default {
   name: "NewAuthtoken",
+
+  components: {
+    Input,
+  },
 
   data() {
     return {

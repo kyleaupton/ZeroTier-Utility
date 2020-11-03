@@ -79,6 +79,7 @@ export default new Vuex.Store({
       state.meta.errorState.error = true;
       state.meta.errorState.status = error.status;
       state.meta.errorState.statusText = error.statusText;
+      state.allNetworks.loaded = true;
     },
 
     resetError(state) {
@@ -109,6 +110,7 @@ export default new Vuex.Store({
     getNetworks(context) {
       context.commit("resetNetworks");
       ipcRenderer.once("bootstrap-resopnse", (event, arg) => {
+        context.commit("resetError");
         context.commit("storeNetworks", arg);
         const now = new Date();
         context.dispatch("setLastRefreshed", now.getTime());

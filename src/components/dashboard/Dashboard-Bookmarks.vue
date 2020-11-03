@@ -43,10 +43,6 @@ export default {
     draggable,
   },
 
-  created() {
-    console.log(this.favorites);
-  },
-
   data() {
     return {
       filter: "",

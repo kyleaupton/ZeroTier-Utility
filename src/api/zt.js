@@ -31,6 +31,11 @@ async function Bootstrap() {
   // 5) $$ profit $$
 
   const { stdout } = await exec("zerotier-cli status");
+  // const stdout = null;
+
+  if (!stdout) {
+    throw Error("ZeroTier One is not installed.");
+  }
 
   // TODO: Handle if zt is not installed
 
@@ -86,10 +91,18 @@ export function API() {
         const payload = await Bootstrap();
         event.reply("bootstrap-resopnse", payload);
       } catch (error) {
-        event.reply("bootstrap-response-error", {
-          status: error.response.status,
-          statusText: error.response.statusText,
-        });
+        let payload;
+        if (error.response) {
+          payload = {
+            status: error.response.status,
+            statusText: error.response.statusText,
+          };
+        } else {
+          payload = {
+            statusText: error.message,
+          };
+        }
+        event.reply("bootstrap-response-error", payload);
       }
     });
 
