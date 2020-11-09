@@ -3,7 +3,7 @@
     <Input
       v-model="filter"
       class="bookmarks-search"
-      label="Search for a bookedmarked peer"
+      label="Search for a bookmarked peer"
     />
     <div>
       <draggable
